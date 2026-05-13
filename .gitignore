@@ -1,0 +1,48 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+.next/
+out/
+build/
+
+# Foundry
+contracts/out/
+contracts/cache/
+contracts/forge-cache/
+contracts/lib/
+contracts/broadcast/
+contracts/deployments/
+
+# Go
+services/account/tmp/
+services/account/bin/
+
+# Environment
+.env
+.env.local
+.env.*.local
+*.env.example.private
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Generated
+services/account/internal/db/queries/*.go
+!services/account/internal/db/queries/go.mod
+
+# Turbo
+.turbo/

@@ -1,0 +1,3 @@
+DROP TABLE IF EXISTS otp_codes;
+DROP TABLE IF EXISTS strategies_def;
+DELETE FROM approval_policies WHERE enterprise_id = '00000000-0000-0000-0000-000000000000';

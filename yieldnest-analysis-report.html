@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YieldNest 系统说明书 vs 线上系统 — 对比分析报告</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --card: #1a1d2e;
+    --border: #2a2d3e;
+    --text: #e1e4ea;
+    --muted: #8b8fa7;
+    --accent: #5b7fff;
+    --green: #34d399;
+    --red: #f87171;
+    --amber: #fbbf24;
+    --purple: #a78bfa;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 40px 24px;
+  }
+  .container { max-width: 1200px; margin: 0 auto; }
+
+  /* Header */
+  .report-header {
+    text-align: center;
+    margin-bottom: 48px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  .report-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, var(--accent), var(--purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .report-header .meta {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  .badge-row {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+  .badge {
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+  .badge-spec { background: rgba(91,127,255,0.15); color: var(--accent); }
+  .badge-live { background: rgba(167,139,250,0.15); color: var(--purple); }
+
+  /* Section */
+  .section { margin-bottom: 40px; }
+  .section-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title .icon { font-size: 1.4rem; }
+
+  /* Cards */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .card h3 {
+    font-size: 1.05rem;
+    margin-bottom: 12px;
+    color: var(--text);
+  }
+  .card p, .card li { color: var(--muted); font-size: 0.93rem; }
+
+  /* Comparison Table */
+  .comparison-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 16px 0;
+    font-size: 0.9rem;
+  }
+  .comparison-table th {
+    background: var(--card);
+    text-align: left;
+    padding: 12px 16px;
+    font-weight: 700;
+    color: var(--text);
+    border-bottom: 2px solid var(--border);
+    position: sticky;
+    top: 0;
+  }
+  .comparison-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .comparison-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .col-label { font-weight: 600; color: var(--text); width: 22%; }
+  .col-spec { width: 39%; }
+  .col-live { width: 39%; }
+
+  /* Status indicators */
+  .match { color: var(--green); }
+  .partial { color: var(--amber); }
+  .different { color: var(--red); }
+  .icon-sm { margin-right: 4px; }
+
+  /* Summary boxes */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+  .summary-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+  }
+  .summary-card h3 {
+    font-size: 1rem;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .summary-card ul { list-style: none; padding: 0; }
+  .summary-card li {
+    padding: 6px 0;
+    color: var(--muted);
+    font-size: 0.9rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .summary-card li:last-child { border-bottom: none; }
+
+  /* Venn-like highlight cards */
+  .highlight-box {
+    border-left: 4px solid var(--accent);
+    background: rgba(91,127,255,0.08);
+    padding: 16px 20px;
+    border-radius: 0 8px 8px 0;
+    margin: 16px 0;
+  }
+  .highlight-box.red { border-color: var(--red); background: rgba(248,113,113,0.08); }
+  .highlight-box.amber { border-color: var(--amber); background: rgba(251,191,36,0.08); }
+
+  /* Footer */
+  .report-footer {
+    text-align: center;
+    padding: 32px 0 16px;
+    color: var(--muted);
+    font-size: 0.85rem;
+    border-top: 1px solid var(--border);
+    margin-top: 48px;
+  }
+
+  /* Chart bars */
+  .bar-chart { margin: 12px 0; }
+  .bar-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    gap: 12px;
+  }
+  .bar-label { width: 160px; font-size: 0.85rem; color: var(--muted); text-align: right; }
+  .bar-track { flex: 1; background: rgba(255,255,255,0.06); height: 22px; border-radius: 4px; overflow: hidden; position: relative; }
+  .bar-fill { height: 100%; border-radius: 4px; display: flex; align-items: center; padding-left: 8px; font-size: 0.75rem; font-weight: 600; }
+  .bar-fill.green { background: linear-gradient(90deg, #34d399, #22c55e); }
+  .bar-fill.amber { background: linear-gradient(90deg, #fbbf24, #f59e0b); }
+  .bar-fill.red { background: linear-gradient(90deg, #f87171, #ef4444); }
+  .bar-fill.purple { background: linear-gradient(90deg, #a78bfa, #8b5cf6); }
+
+  @media (max-width: 768px) {
+    .comparison-table { font-size: 0.8rem; }
+    .comparison-table td, .comparison-table th { padding: 8px 10px; }
+    .summary-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- ========== HEADER ========== -->
+<header class="report-header">
+  <h1>YieldNest 系统功能说明书 vs 线上系统 对比分析报告</h1>
+  <p class="meta">分析日期：2026年5月13日 &nbsp;|&nbsp; 说明书版本：v1.0 &nbsp;|&nbsp; 线上地址：app.yieldnest.finance</p>
+  <div class="badge-row">
+    <span class="badge badge-spec">说明书 (Spec)</span>
+    <span class="badge badge-live">线上系统 (Live)</span>
+  </div>
+</header>
+
+<!-- ========== EXECUTIVE SUMMARY ========== -->
+<section class="section">
+  <h2 class="section-title"><span class="icon">📋</span> 执行摘要</h2>
+
+  <div class="highlight-box red">
+    <strong>核心结论：说明书与线上系统是两个完全不同的产品。</strong><br>
+    说明书描述的是面向<strong>传统企业</strong>的稳定币收益聚合器（企业版"余额宝"），而线上 app.yieldnest.finance 是一个面向<strong>加密原生用户</strong>的 AI 驱动流动性质押/再质押协议。两者在目标用户、产品形态、技术架构、收益来源等核心维度上均存在根本性差异。
+  </div>
+
+  <div class="summary-grid" style="margin-top: 24px;">
+    <div class="summary-card">
+      <h3>📘 说明书 (Spec)</h3>
+      <ul>
+        <li><strong>产品定位：</strong>企业级稳定币收益聚合器</li>
+        <li><strong>目标用户：</strong>传统中小企业 CFO / 财务团队</li>
+        <li><strong>核心资产：</strong>USDC / USDT 稳定币</li>
+        <li><strong>核心技术：</strong>ERC-4337 智能账户 + Safe{Core}</li>
+        <li><strong>收益来源：</strong>国债 / DeFi 借贷 / 基差交易</li>
+        <li><strong>合规能力：</strong>KYB 企业认证 + 多签审批流 + 审计追踪</li>
+        <li><strong>入金通道：</strong>链上转账 + 银行电汇 + ACH + 信用卡</li>
+        <li><strong>治理代币：</strong>无（无代币模型）</li>
+      </ul>
+    </div>
+    <div class="summary-card">
+      <h3>🌐 线上系统 (Live)</h3>
+      <ul>
+        <li><strong>产品定位：</strong>AI 驱动流动性质押/再质押协议</li>
+        <li><strong>目标用户：</strong>加密原生用户 / DeFi 投资者</li>
+        <li><strong>核心资产：</strong>ETH / BNB / BTC / LSD 代币</li>
+        <li><strong>核心技术：</strong>EigenLayer 再质押 + NEST AI 优化</li>
+        <li><strong>收益来源：</strong>ETH/BNB 质押 + AVS + RWA 信贷</li>
+        <li><strong>合规能力：</strong>无 KYB/KYC（标准钱包连接）</li>
+        <li><strong>入金通道：</strong>仅链上钱包转账</li>
+        <li><strong>治理代币：</strong>YND / veYND 双代币</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ========== OVERALL SIMILARITY ========== -->
+<section class="section">
+  <h2 class="section-title"><span class="icon">📊</span> 各维度相似度评估</h2>
+
+  <div class="card">
+    <div class="bar-chart">
+      <div class="bar-row">
+        <span class="bar-label">产品定位</span>
+        <div class="bar-track"><div class="bar-fill red" style="width: 10%;">10%</div></div>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">目标用户</span>
+        <div class="bar-track"><div class="bar-fill red" style="width: 5%;">5%</div></div>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">核心功能</span>
+        <div class="bar-track"><div class="bar-fill amber" style="width: 25%;">25%</div></div>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">技术架构</span>
+        <div class="bar-track"><div class="bar-fill red" style="width: 15%;">15%</div></div>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">收益策略</span>
+        <div class="bar-track"><div class="bar-fill amber" style="width: 30%;">30%</div></div>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">合规/安全</span>
+        <div class="bar-track"><div class="bar-fill red" style="width: 20%;">20%</div></div>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">治理模型</span>
+        <div class="bar-track"><div class="bar-fill red" style="width: 5%;">5%</div></div>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">品牌名称</span>
+        <div class="bar-track"><div class="bar-fill green" style="width: 100%;">100% — 同名</div></div>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label" style="font-weight:700;">综合相似度</span>
+        <div class="bar-track"><div class="bar-fill amber" style="width: 20%;">~20%</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== DETAILED COMPARISON ========== -->
+<section class="section">
+  <h2 class="section-title"><span class="icon">🔍</span> 逐模块详细对比</h2>
+
+  <!-- 1. 产品定位 -->
+  <h3 style="margin-bottom: 12px; margin-top: 24px; color: var(--accent);">1. 产品定位 & 目标用户</h3>
+  <table class="comparison-table">
+    <thead>
+      <tr><th>对比维度</th><th>📘 说明书 (Spec)</th><th>🌐 线上系统 (Live)</th><th>匹配度</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="col-label">产品类型</td>
+        <td class="col-spec">企业级稳定币收益聚合器（"企业版余额宝"）</td>
+        <td class="col-live">AI 驱动流动性质押/再质押协议（MAX LRTs）</td>
+        <td class="different">完全不同</td>
+      </tr>
+      <tr>
+        <td class="col-label">目标用户</td>
+        <td class="col-spec">传统中小企业 (50-500人)，CFO/财务主管，年营收 $5M-$200M</td>
+        <td class="col-live">加密原生用户，DeFi 投资者，ETH/BNB 持有者</td>
+        <td class="different">完全不同</td>
+      </tr>
+      <tr>
+        <td class="col-label">用户门槛</td>
+        <td class="col-spec">需要完成 KYB 企业认证、UBO 声明、证件上传、人脸识别</td>
+        <td class="col-live">仅需连接 Web3 钱包（MetaMask 等），无身份验证</td>
+        <td class="different">完全不同</td>
+      </tr>
+      <tr>
+        <td class="col-label">核心资产</td>
+        <td class="col-spec">USDC / USDT 稳定币</td>
+        <td class="col-live">ETH, BNB, BTC, stETH, wstETH, sfrxETH, mETH, OETH, USDC(ynRWAx)</td>
+        <td class="partial">部分重叠（均有稳定币产品）</td>
+      </tr>
+      <tr>
+        <td class="col-label">核心叙事</td>
+        <td class="col-spec">"链接传统中小企业与链上国债收益" — 传统金融合规叙事</td>
+        <td class="col-live">"AI-powered liquid restaking" — DeFi/Web3 原生叙事</td>
+        <td class="different">完全不同</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 2. 用户角色与权限 -->
+  <h3 style="margin-bottom: 12px; margin-top: 32px; color: var(--accent);">2. 用户角色与权限体系</h3>
+  <table class="comparison-table">
+    <thead>
+      <tr><th>对比维度</th><th>📘 说明书 (Spec)</th><th>🌐 线上系统 (Live)</th><th>匹配度</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="col-label">角色体系</td>
+        <td class="col-spec">4 种企业角色（Admin / Operator / Approver / Auditor）+ 平台角色（Operator / Admin）</td>
+        <td class="col-live">无角色体系，所有用户平等；通过 veYND 治理权重区分影响力</td>
+        <td class="different">完全不同</td>
+      </tr>
+      <tr>
+        <td class="col-label">团队管理</td>
+        <td class="col-spec">企业管理员可邀请/管理团队成员，设置角色和权限</td>
+        <td class="col-live">无团队/企业概念</td>
+        <td class="different">不存在</td>
+      </tr>
+      <tr>
+        <td class="col-label">多签审批</td>
+        <td class="col-spec">完整的 m-of-n 多签审批流，可配置策略引擎</td>
+        <td class="col-live">无审批流；用户自行签名交易</td>
+        <td class="different">不存在</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 3. 账户与钱包 -->
+  <h3 style="margin-bottom: 12px; margin-top: 32px; color: var(--accent);">3. 账户与钱包体系</h3>
+  <table class="comparison-table">
+    <thead>
+      <tr><th>对比维度</th><th>📘 说明书 (Spec)</th><th>🌐 线上系统 (Live)</th><th>匹配度</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="col-label">账户类型</td>
+        <td class="col-spec">ERC-4337 智能账户（基于 Safe{Core} 5.x），CREATE2 确定性部署</td>
+        <td class="col-live">用户自有钱包（EOA），无智能账户层</td>
+        <td class="different">完全不同</td>
+      </tr>
+      <tr>
+        <td class="col-label">密钥管理</td>
+        <td class="col-spec">Passkey (WebAuthn) + Email Magic Link + 硬件密钥 + 平台应急密钥</td>
+        <td class="col-live">用户自行管理私钥（MetaMask / Ledger 等）</td>
+        <td class="different">完全不同</td>
+      </tr>
+      <tr>
+        <td class="col-label">Gas 费方案</td>
+        <td class="col-spec">Paymaster 代付 Gas（USDC 支付 / 月度账单 / 平台补贴）</td>
+        <td class="col-live">用户自行支付 Gas（ETH/BNB）</td>
+        <td class="different">完全不同</td>
+      </tr>
+      <tr>
+        <td class="col-label">账户恢复</td>
+        <td class="col-spec">Email Magic Link 恢复 + 社交恢复 + 平台应急恢复</td>
+        <td class="col-live">用户自行保管助记词/私钥</td>
+        <td class="different">完全不同</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 4. 入金/出金 -->
+  <h3 style="margin-bottom: 12px; margin-top: 32px; color: var(--accent);">4. 入金与出金</h3>
+  <table class="comparison-table">
+    <thead>
+      <tr><th>对比维度</th><th>📘 说明书 (Spec)</th><th>🌐 线上系统 (Live)</th><th>匹配度</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="col-label">链上入金</td>
+        <td class="col-spec">USDC/USDT 转入智能账户地址</td>
+        <td class="col-live">ETH/BNB/USDC 等存入 MAX LRT 金库合约</td>
+        <td class="partial">概念相似，实现不同</td>
+      </tr>
+      <tr>
+        <td class="col-label">法币入金</td>
+        <td class="col-spec">银行电汇 (Wire) + ACH + 信用卡 (USD → USDC)</td>
+        <td class="col-live">无任何法币入金通道</td>
+        <td class="different">不存在</td>
+      </tr>
+      <tr>
+        <td class="col-label">出金白名单</td>
+        <td class="col-spec">企业预配置出金地址白名单</td>
+        <td class="col-live">无白名单机制，用户自由转账</td>
+        <td class="different">不存在</td>
+      </tr>
+      <tr>
+        <td class="col-label">限额控制</td>
+        <td class="col-spec">多级限额（日限/单笔/角色），超标触发审批</td>
+        <td class="col-live">无限额控制</td>
+        <td class="different">不存在</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 5. 收益策略 -->
+  <h3 style="margin-bottom: 12px; margin-top: 32px; color: var(--accent);">5. 收益策略引擎</h3>
+  <table class="comparison-table">
+    <thead>
+      <tr><th>对比维度</th><th>📘 说明书 (Spec)</th><th>🌐 线上系统 (Live)</th><th>匹配度</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="col-label">收益产品</td>
+        <td class="col-spec">6 种策略：Treasury Core (BUIDL), Treasury Plus (USDY), DeFi Prime (Aave), Morpho Optimizer, Basis Trade (Ethena), Composite</td>
+        <td class="col-live">5 种 MAX LRT：ynETHx, ynBNBx, ynBTCx, ynRWAx, ynLSDe</td>
+        <td class="partial">仅 ynRWAx 为稳定币产品</td>
+      </tr>
+      <tr>
+        <td class="col-label">收益来源</td>
+        <td class="col-spec">短期美债回购 (BUIDL) + 美债 (USDY) + 超额抵押借贷 (Aave/Morpho) + 基差交易 (Ethena)</td>
+        <td class="col-live">ETH PoS 质押 + EigenLayer AVS 再质押 + BNB 质押 + 澳洲房贷私人信贷 + 积分/空投</td>
+        <td class="partial">部分重叠（均有借贷类+Aave/Morpho 方向）</td>
+      </tr>
+      <tr>
+        <td class="col-label">分配引擎</td>
+        <td class="col-spec">规则驱动：风险评分 + 流动性需求 + 收益率排序 + 合规约束</td>
+        <td class="col-live">NEST AI 自主代理：24/7 市场分析 + 自动再平衡 + AI 优化</td>
+        <td class="partial">目标相同，实现方式不同</td>
+      </tr>
+      <tr>
+        <td class="col-label">再平衡机制</td>
+        <td class="col-spec">定时再平衡（每周）+ 阈值再平衡（偏离 >5%）</td>
+        <td class="col-live">AI 连续优化 + 每 12 小时自动复投</td>
+        <td class="partial">概念相似</td>
+      </tr>
+      <tr>
+        <td class="col-label">BUIDL 接入</td>
+        <td class="col-spec">✅ 核心策略 (Treasury Core)</td>
+        <td class="col-live">❌ 无 BUIDL 接入</td>
+        <td class="different">不存在</td>
+      </tr>
+      <tr>
+        <td class="col-label">RWA 方向</td>
+        <td class="col-spec">国债 RWA (BUIDL, USDY)</td>
+        <td class="col-live">私人信贷 RWA (澳洲房贷, ynRWAx)</td>
+        <td class="partial">同为 RWA，底层不同</td>
+      </tr>
+      <tr>
+        <td class="col-label">费用模型</td>
+        <td class="col-spec">年化 0.3-0.5% 管理费</td>
+        <td class="col-live">0% 管理费 / 0% 业绩费（目前免手续费吸引用户）</td>
+        <td class="partial">不同的商业模式</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 6. 审批流 -->
+  <h3 style="margin-bottom: 12px; margin-top: 32px; color: var(--accent);">6. 审批流 & 企业管控</h3>
+  <table class="comparison-table">
+    <thead>
+      <tr><th>对比维度</th><th>📘 说明书 (Spec)</th><th>🌐 线上系统 (Live)</th><th>匹配度</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="col-label">审批策略引擎</td>
+        <td class="col-spec">完善的 JSON 规则引擎：条件匹配 + m-of-n 多签 + 角色限定审批人</td>
+        <td class="col-live">无审批流</td>
+        <td class="different">不存在</td>
+      </tr>
+      <tr>
+        <td class="col-label">审批触发条件</td>
+        <td class="col-spec">超额出金 / 白名单变更 / 策略变更 / 权限变更 / 账户恢复</td>
+        <td class="col-live">N/A</td>
+        <td class="different">不存在</td>
+      </tr>
+      <tr>
+        <td class="col-label">审批通知</td>
+        <td class="col-spec">邮件 + App Push + Webhook</td>
+        <td class="col-live">N/A（仅链上交易确认）</td>
+        <td class="different">不存在</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 7. 仪表盘与报表 -->
+  <h3 style="margin-bottom: 12px; margin-top: 32px; color: var(--accent);">7. 仪表盘与报表</h3>
+  <table class="comparison-table">
+    <thead>
+      <tr><th>对比维度</th><th>📘 说明书 (Spec)</th><th>🌐 线上系统 (Live)</th><th>匹配度</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="col-label">仪表盘</td>
+        <td class="col-spec">企业级 Dashboard：总资产、昨日/累计收益、APY、收益趋势图、资产分配、交易历史</td>
+        <td class="col-live">Portfolio 视图：持仓、累计收益、Seeds 积分</td>
+        <td class="partial">基础持仓展示重叠</td>
+      </tr>
+      <tr>
+        <td class="col-label">报表导出</td>
+        <td class="col-spec">月度对账单 (PDF/CSV) + 年度税务报表 + 合规报告 + 审计报告</td>
+        <td class="col-live">无报表导出功能</td>
+        <td class="different">不存在</td>
+      </tr>
+      <tr>
+        <td class="col-label">链上资产证明</td>
+        <td class="col-spec">Merkle Proof 实时审计报告</td>
+        <td class="col-live">链上智能合约完全透明可查，但无内置 Merkle Proof 工具</td>
+        <td class="partial">部分概念重叠</td>
+      </tr>
+      <tr>
+        <td class="col-label">积分/激励</td>
+        <td class="col-spec">无</td>
+        <td class="col-live">Seeds 积分系统（YND 空投预期）</td>
+        <td class="different">完全不同</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 8. 风险管控 -->
+  <h3 style="margin-bottom: 12px; margin-top: 32px; color: var(--accent);">8. 风险管控</h3>
+  <table class="comparison-table">
+    <thead>
+      <tr><th>对比维度</th><th>📘 说明书 (Spec)</th><th>🌐 线上系统 (Live)</th><th>匹配度</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="col-label">熔断机制</td>
+        <td class="col-spec">三级熔断：黄（暂停新资金）/ 橙（加速赎回）/ 红（全局暂停）</td>
+        <td class="col-live">智能合约内置暂停机制 + Hypernative/Defimon 实时监控</td>
+        <td class="partial">均有应急暂停</td>
+      </tr>
+      <tr>
+        <td class="col-label">风险监控</td>
+        <td class="col-spec">7 维度实时监控（市场/脱钩/协议/操作/地址/Gas/流动性）</td>
+        <td class="col-live">IntoTheBlock Risk Radar（12 指标）+ LlamaRisk 合作</td>
+        <td class="partial">目标一致，实现不同</td>
+      </tr>
+      <tr>
+        <td class="col-label">地址筛查</td>
+        <td class="col-spec">Chainalysis KYT / TRM Labs 钱包风险评分</td>
+        <td class="col-live">无地址筛查（用户自行管理钱包）</td>
+        <td class="different">不存在</td>
+      </tr>
+      <tr>
+        <td class="col-label">保险</td>
+        <td class="col-spec">Nexus Mutual 集成，默认 $250K 保额</td>
+        <td class="col-live">无保险集成</td>
+        <td class="different">不存在</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 9. 合规 -->
+  <h3 style="margin-bottom: 12px; margin-top: 32px; color: var(--accent);">9. 合规审计追踪</h3>
+  <table class="comparison-table">
+    <thead>
+      <tr><th>对比维度</th><th>📘 说明书 (Spec)</th><th>🌐 线上系统 (Live)</th><th>匹配度</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="col-label">KYB/KYC</td>
+        <td class="col-spec">完整 KYB 流程：企业信息 + UBO + 证件 + 人脸识别 + 制裁筛查</td>
+        <td class="col-live">无任何身份验证</td>
+        <td class="different">不存在</td>
+      </tr>
+      <tr>
+        <td class="col-label">审计日志</td>
+        <td class="col-spec">不可变存储的完整操作审计日志 + 双时间戳</td>
+        <td class="col-live">链上交易记录（可通过区块浏览器查询）</td>
+        <td class="partial">链上透明可查</td>
+      </tr>
+      <tr>
+        <td class="col-label">合规报告</td>
+        <td class="col-spec">CTR 等效报告 / SAR 等效报告 / 月度合规声明 / 年度 1099</td>
+        <td class="col-live">无合规报告功能</td>
+        <td class="different">不存在</td>
+      </tr>
+      <tr>
+        <td class="col-label">审计员角色</td>
+        <td class="col-spec">专用只读审计员角色</td>
+        <td class="col-live">无</td>
+        <td class="different">不存在</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 10. 技术架构 -->
+  <h3 style="margin-bottom: 12px; margin-top: 32px; color: var(--accent);">10. 技术架构</h3>
+  <table class="comparison-table">
+    <thead>
+      <tr><th>对比维度</th><th>📘 说明书 (Spec)</th><th>🌐 线上系统 (Live)</th><th>匹配度</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="col-label">前端</td>
+        <td class="col-spec">Next.js 15 + shadcn/ui + Tailwind CSS v4 + Wagmi v3 + Zustand</td>
+        <td class="col-live">Web App (PWA)，技术栈未公开（推测 React/Next.js）</td>
+        <td class="partial">可能部分重叠</td>
+      </tr>
+      <tr>
+        <td class="col-label">后端</td>
+        <td class="col-spec">微服务架构：Auth(JS) + Account(Go) + Strategy(Go) + Approval(JS) + Reporting(Python) + Blockchain(Go/Rust)</td>
+        <td class="col-live">智能合约为主 + 链下索引器 + NEST AI 代理</td>
+        <td class="partial">均为混合架构</td>
+      </tr>
+      <tr>
+        <td class="col-label">链支持</td>
+        <td class="col-spec">初始 Base，预留 Arbitrum/Ethereum/Solana</td>
+        <td class="col-live">Ethereum + BNB Chain + Base + Arbitrum + Polygon + Ink 等 8+ 链</td>
+        <td class="partial">多链方向一致，具体链不同</td>
+      </tr>
+      <tr>
+        <td class="col-label">智能合约</td>
+        <td class="col-spec">Safe 5.x 扩展 + Vault + StrategyAdapter + Paymaster + EmergencyPause + Timelock</td>
+        <td class="col-live">MAX LRT Vaults + ERC-4626 金库 + 质押合约</td>
+        <td class="different">合约体系完全不同</td>
+      </tr>
+      <tr>
+        <td class="col-label">合约审计</td>
+        <td class="col-spec">Trail of Bits + Spearbit + Certora 形式化验证</td>
+        <td class="col-live">Zokyo + ChainSecurity + Hypernative，共 13 次审计</td>
+        <td class="match">均已审计</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 11. 治理与代币 -->
+  <h3 style="margin-bottom: 12px; margin-top: 32px; color: var(--accent);">11. 治理与代币模型</h3>
+  <table class="comparison-table">
+    <thead>
+      <tr><th>对比维度</th><th>📘 说明书 (Spec)</th><th>🌐 线上系统 (Live)</th><th>匹配度</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="col-label">原生代币</td>
+        <td class="col-spec">无代币模型</td>
+        <td class="col-live">YND (治理代币, 1B supply) + veYND (投票托管 NFT)</td>
+        <td class="different">完全不同</td>
+      </tr>
+      <tr>
+        <td class="col-label">治理模型</td>
+        <td class="col-spec">平台运营 + 平台管理员 + 3-of-5 多签治理</td>
+        <td class="col-live">DAO 治理 (Aragon V2) + veYND 投票 + SubDAO 结构</td>
+        <td class="different">完全不同</td>
+      </tr>
+      <tr>
+        <td class="col-label">收入分配</td>
+        <td class="col-spec">管理费归平台</td>
+        <td class="col-live">Buyback-and-Distribute 模型，协议收入分配给 veYND 持有者</td>
+        <td class="different">完全不同</td>
+      </tr>
+      <tr>
+        <td class="col-label">积分/空投</td>
+        <td class="col-spec">无</td>
+        <td class="col-live">Seeds 积分系统 + YND 空投 + Merkl/Brevis 额外激励</td>
+        <td class="different">完全不同</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ========== SIMILARITIES ========== -->
+<section class="section">
+  <h2 class="section-title"><span class="icon">✅</span> 相同点（重叠领域）</h2>
+
+  <div class="card">
+    <p style="margin-bottom: 16px;">尽管两个产品存在根本性差异，仍可识别出以下少量重叠领域：</p>
+
+    <table class="comparison-table">
+      <thead>
+        <tr><th style="width:5%;">#</th><th style="width:35%;">重叠领域</th><th>说明</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td><strong>品牌名称</strong></td>
+          <td>两者均使用 "YieldNest" 品牌名称和 yieldnest.finance 域名</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><strong>稳定币收益产品存在</strong></td>
+          <td>Spec 全部围绕稳定币收益；Live 有 ynRWAx（USDC→澳洲房贷，~11% APY），是目前唯一的稳定币产品线</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><strong>收益聚合概念</strong></td>
+          <td>两者均将多种底层收益源聚合为单一产品，降低用户操作复杂度</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><strong>RWA 方向</strong></td>
+          <td>Spec 关注国债 RWA (BUIDL/USDY)；Live 关注私人信贷 RWA (ynRWAx)，均为传统资产上链方向</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td><strong>多链支持</strong></td>
+          <td>两者均设计为多链部署。Spec 以 Base 为起点；Live 已在 Ethereum/BNB Chain/Base 等 8+ 链运行</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td><strong>非托管原则</strong></td>
+          <td>两者均强调用户资产自托管（Spec: Self-Custody with Safety Net; Live: 非托管 LRT 机制）</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td><strong>智能合约审计</strong></td>
+          <td>两者均有专业合约审计要求</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td><strong>Morpho 协议引用</strong></td>
+          <td>Spec 的 Morpho Optimizer 策略与 Live 的 ynRWAx 在 Morpho 上的借贷循环有概念交集</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td><strong>Base 链部署</strong></td>
+          <td>Spec 优先部署 Base；Live 也已部署至 Base</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ========== DIFFERENCES ========== -->
+<section class="section">
+  <h2 class="section-title"><span class="icon">❌</span> 核心差异点</h2>
+
+  <div class="card">
+    <p style="margin-bottom: 20px;">以下按影响程度排序，列出说明书与线上系统之间最关键的差异：</p>
+
+    <table class="comparison-table">
+      <thead>
+        <tr><th style="width:5%;">#</th><th style="width:25%;">差异维度</th><th style="width:35%;">说明书 (Spec)</th><th style="width:35%;">线上 (Live)</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td><strong>目标客群</strong></td>
+          <td>传统企业 CFO / 财务团队（需 KYB）</td>
+          <td>加密原生 DeFi 投资者（无 KYC）</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><strong>账户架构</strong></td>
+          <td>ERC-4337 智能账户 (Safe{Core}) + Passkey</td>
+          <td>用户自管理 EOA 钱包</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><strong>Gas 模式</strong></td>
+          <td>Paymaster 代付，用户用 USDC 付费</td>
+          <td>用户自付 Gas (ETH/BNB)</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><strong>法币入金</strong></td>
+          <td>Wire / ACH / 信用卡</td>
+          <td>无任何法币通道</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td><strong>企业管控</strong></td>
+          <td>多签审批流 + 白名单 + 限额 + 角色权限</td>
+          <td>无企业级管控功能</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td><strong>合规体系</strong></td>
+          <td>KYB + AML + 制裁筛查 + 合规报告 (CTR/SAR/1099)</td>
+          <td>无合规体系</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td><strong>核心资产类型</strong></td>
+          <td>纯稳定币 (USDC/USDT)</td>
+          <td>以波动资产为主 (ETH/BNB/BTC)，稳定币为副</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td><strong>收益来源</strong></td>
+          <td>国债回购 + 超额抵押借贷 + 基差交易</td>
+          <td>PoS 质押 + EigenLayer 再质押 + 私人信贷</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td><strong>代币模型</strong></td>
+          <td>无治理代币，纯 SaaS 收入模式</td>
+          <td>YND/veYND 双代币 + DAO + 收益分发</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td><strong>AI 集成</strong></td>
+          <td>无 AI 组件</td>
+          <td>NEST AI 核心驱动（自主代理优化策略）</td>
+        </tr>
+        <tr>
+          <td>11</td>
+          <td><strong>发票/报表</strong></td>
+          <td>完整的 PDF/CSV 报表导出能力</td>
+          <td>无报表功能</td>
+        </tr>
+        <tr>
+          <td>12</td>
+          <td><strong>保险</strong></td>
+          <td>Nexus Mutual 合约保险</td>
+          <td>无保险集成</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ========== ANALYSIS ========== -->
+<section class="section">
+  <h2 class="section-title"><span class="icon">🧠</span> 深层分析与推测</h2>
+
+  <div class="card">
+    <h3>两者是同一品牌下的不同产品吗？</h3>
+    <p>
+      基于现有证据，<strong>说明书中的产品在线上并不存在</strong>。app.yieldnest.finance 运行的是完全不同的产品（MAX LRT 协议）。
+      这存在以下几种可能：
+    </p>
+    <ul style="margin-top: 12px; padding-left: 20px; color: var(--muted);">
+      <li><strong>可能性 A — 说明书是待构建产品的设计文档：</strong>说明书可能是一份尚未实施的"企业版 YieldNest"产品设计方案，
+        目标是在现有协议之上构建面向传统企业的合规层。ynRWAx 产品线可能是这一方向的初步探索。</li>
+      <li><strong>可能性 B — 品牌演进/战略转型：</strong>YieldNest 最初可能规划过企业级稳定币产品，但在执行过程中转型为加密原生的 LRT 协议，
+        说明书中的设计被搁置或重新规划。</li>
+      <li><strong>可能性 C — 同名不同项目：</strong>ETHGlobal 2023 黑客松的 YieldNest（PWA + 账户抽象方向）与当前 YieldNest（LRT 方向）可能是同一团队的不同产品迭代。
+        说明书可能是该团队设想的下一个产品线扩张方向。</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>如果说明书产品要在现有线上系统基础上构建，需要新增哪些能力？</h3>
+    <div class="highlight-box">
+      <strong>差距分析 — 从 Live → Spec 需要从零构建的核心能力：</strong>
+    </div>
+    <table class="comparison-table">
+      <thead>
+        <tr><th style="width:5%;">#</th><th>需新增能力</th><th>预估复杂度</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>ERC-4337 智能账户基础设施（Safe{Core} + Bundler + Paymaster）</td><td>极高</td></tr>
+        <tr><td>2</td><td>WebAuthn/Passkey 认证系统</td><td>高</td></tr>
+        <tr><td>3</td><td>KYB 企业认证流程 + 第三方集成 (Persona/Sumsub/Chainalysis)</td><td>极高</td></tr>
+        <tr><td>4</td><td>多签审批流引擎 + 策略配置</td><td>高</td></tr>
+        <tr><td>5</td><td>法币入金通道 (Wire/ACH/信用卡)</td><td>极高</td></tr>
+        <tr><td>6</td><td>企业团队管理与 RBAC</td><td>中高</td></tr>
+        <tr><td>7</td><td>BUIDL/USDY/Ethena 策略适配器</td><td>高</td></tr>
+        <tr><td>8</td><td>报表系统 (PDF/CSV 生成 + 税务报告)</td><td>中</td></tr>
+        <tr><td>9</td><td>合规报告生成 (CTR/SAR/1099)</td><td>高</td></tr>
+        <tr><td>10</td><td>Nexus Mutual 保险集成</td><td>中</td></tr>
+        <tr><td>11</td><td>微服务后端架构（当前以智能合约为主）</td><td>极高</td></tr>
+        <tr><td>12</td><td>数据库层 (PostgreSQL/ClickHouse/Redis)</td><td>中高</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>可复用现有线上系统的部分</h3>
+    <div class="highlight-box amber">
+      <strong>以下线上系统能力可作为说明书产品的基础：</strong>
+    </div>
+    <ul style="padding-left: 20px; color: var(--muted); margin-top: 12px;">
+      <li>ynRWAx 可演进为说明书中的 "Composite" 或 "RWA" 收益策略之一</li>
+      <li>多链部署经验（8+ 链）可直接支撑 Spec 的多链扩展目标</li>
+      <li>合约审计和安全监控基础设施（Hypernative/Defimon/Risk Radar）</li>
+      <li>Aave/Morpho/Euler 等 DeFi 协议的集成经验</li>
+      <li>NEST AI 可应用于 Spec 的智能分配引擎，替代规则驱动方式</li>
+      <li>Beefy Finance 自动复投机制可对应 Spec 的自动复投功能</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ========== FEATURE COVERAGE ========== -->
+<section class="section">
+  <h2 class="section-title"><span class="icon">📈</span> 说明书功能覆盖度矩阵</h2>
+
+  <div class="card">
+    <p style="margin-bottom: 16px;">对照说明书的 P0 功能需求，评估线上系统的覆盖情况：</p>
+
+    <table class="comparison-table">
+      <thead>
+        <tr><th>模块</th><th>P0 需求数</th><th>线上已实现</th><th>部分实现</th><th>未实现</th><th>覆盖率</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="col-label">企业入驻与 KYB</td>
+          <td>5 (F-KYB-01~06)</td>
+          <td class="different">0</td>
+          <td class="partial">0</td>
+          <td class="different">5</td>
+          <td class="different"><strong>0%</strong></td>
+        </tr>
+        <tr>
+          <td class="col-label">智能账户系统</td>
+          <td>4 (F-AA-01~04)</td>
+          <td class="different">0</td>
+          <td class="partial">0</td>
+          <td class="different">4</td>
+          <td class="different"><strong>0%</strong></td>
+        </tr>
+        <tr>
+          <td class="col-label">入金与出金</td>
+          <td>5 (F-INOUT-01~03,05~07)</td>
+          <td class="match">1</td>
+          <td class="partial">1</td>
+          <td class="different">3</td>
+          <td class="partial"><strong>30%</strong></td>
+        </tr>
+        <tr>
+          <td class="col-label">收益策略引擎</td>
+          <td>6 (F-YIELD-01~05,12)</td>
+          <td class="match">0</td>
+          <td class="partial">3</td>
+          <td class="different">3</td>
+          <td class="partial"><strong>25%</strong></td>
+        </tr>
+        <tr>
+          <td class="col-label">多签审批流</td>
+          <td>5 (F-APPROVAL-01~05)</td>
+          <td class="different">0</td>
+          <td class="partial">0</td>
+          <td class="different">5</td>
+          <td class="different"><strong>0%</strong></td>
+        </tr>
+        <tr>
+          <td class="col-label">仪表盘与报表</td>
+          <td>5 (F-DASH-01~06)</td>
+          <td class="match">1</td>
+          <td class="partial">1</td>
+          <td class="different">3</td>
+          <td class="partial"><strong>30%</strong></td>
+        </tr>
+        <tr>
+          <td class="col-label">风险管控</td>
+          <td>5 (F-RISK-01~05)</td>
+          <td class="match">1</td>
+          <td class="partial">2</td>
+          <td class="different">2</td>
+          <td class="partial"><strong>40%</strong></td>
+        </tr>
+        <tr>
+          <td class="col-label">合规审计追踪</td>
+          <td>3 (F-AUDIT-01~03)</td>
+          <td class="different">0</td>
+          <td class="partial">1</td>
+          <td class="different">2</td>
+          <td class="partial"><strong>17%</strong></td>
+        </tr>
+        <tr style="font-weight: 700; border-top: 2px solid var(--border);">
+          <td class="col-label">合计</td>
+          <td>38 个 P0 需求</td>
+          <td class="match">3</td>
+          <td class="partial">8</td>
+          <td class="different">27</td>
+          <td class="partial"><strong>~18%</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ========== RECOMMENDATIONS ========== -->
+<section class="section">
+  <h2 class="section-title"><span class="icon">💡</span> 建议与结论</h2>
+
+  <div class="card">
+    <h3>如果目标是实现说明书中的产品，建议路径：</h3>
+    <ol style="padding-left: 20px; color: var(--muted); margin-top: 12px; line-height: 2;">
+      <li><strong>明确产品定位：</strong>确认说明书产品是现有 YieldNest 协议的子产品/独立产品线，还是全新产品方向。</li>
+      <li><strong>优先构建合规基础：</strong>KYB + 智能账户 + 审批流是企业级产品的三大基石，需从零开始构建。</li>
+      <li><strong>利用现有 LRT 基础设施：</strong>可复用 ynRWAx 的 RWA 管道、多链部署经验、安全监控体系。</li>
+      <li><strong>分阶段交付：</strong>Phase 1 聚焦 Base 链 + USDC + BUIDL 策略 + 基础 KYB；Phase 2 扩展法币通道 + 多策略 + 多签审批；Phase 3 多链 + API + 移动端。</li>
+      <li><strong>考虑收购/合作：</strong>法币出入金、KYB 合规、银行合作等能力可通过与持牌机构合作加速获取。</li>
+    </ol>
+  </div>
+
+  <div class="highlight-box" style="margin-top: 24px;">
+    <strong>总体结论：</strong><br>
+    说明书与线上系统是<strong>品牌同名但产品形态、目标用户、技术架构、商业模式均不同的两个产品</strong>。
+    说明书描述的"企业版余额宝"产品在线上并未实现。若以此为产品目标，现有线上系统的基础设施（多链合约 + RWA 管道 + 安全监控）约可提供 <strong>20%</strong> 的复用度，剩余 <strong>80%</strong> 的核心能力（KYB、智能账户、审批流、法币通道、合规报告、微服务后端）需要从零构建。
+  </div>
+</section>
+
+<!-- ========== FOOTER ========== -->
+<footer class="report-footer">
+  <p>YieldNest 系统功能说明书 vs 线上系统对比分析报告 &nbsp;|&nbsp; 生成日期：2026-05-13</p>
+  <p>数据来源：yieldnest-system-spec.md (v1.0) &nbsp;|&nbsp; app.yieldnest.finance &nbsp;|&nbsp; docs.yieldnest.finance &nbsp;|&nbsp; 公开资料</p>
+</footer>
+
+</div>
+</body>
+</html>

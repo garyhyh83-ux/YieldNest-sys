@@ -1,0 +1,29 @@
+{
+  "name": "yieldnest",
+  "version": "0.1.0",
+  "private": true,
+  "description": "YieldNest - Enterprise Stablecoin Yield Aggregator",
+  "scripts": {
+    "dev": "concurrently -n auth,account,web -c blue,green,yellow \"pnpm --filter @yieldnest/auth-service dev\" \"pnpm --filter @yieldnest/account-service dev\" \"pnpm --filter @yieldnest/web dev\"",
+    "build": "pnpm --filter @yieldnest/shared-types build && pnpm -r --filter \"!@yieldnest/account-service\" build",
+    "build:contracts": "cd contracts && forge build",
+    "test:contracts": "cd contracts && forge test",
+    "test:services": "pnpm --filter @yieldnest/auth-service test",
+    "db:migrate": "cd services/account && go run cmd/migrate/main.go up",
+    "db:reset": "cd services/account && go run cmd/migrate/main.go reset",
+    "docker:up": "docker compose -f docker/compose.yaml up -d",
+    "docker:down": "docker compose -f docker/compose.yaml down",
+    "lint": "pnpm -r --filter \"!@yieldnest/account-service\" lint",
+    "typecheck": "pnpm -r --filter \"!@yieldnest/account-service\" typecheck",
+    "clean": "pnpm -r --filter \"!@yieldnest/account-service\" exec rm -rf dist .next node_modules"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0",
+    "typescript": "^5.7.0",
+    "prettier": "^3.4.0"
+  },
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=9"
+  }
+}
