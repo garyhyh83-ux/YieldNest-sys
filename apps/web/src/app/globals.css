@@ -1,16 +1,169 @@
 @import "tailwindcss";
 
+/* ── YieldNest Treasury Terminal ──
+   Aesthetic: Institutional Finance × Precision Trading Desk
+   Deep midnight navy with warm amber gold accents.
+   Dot-grid background, monospace data, refined motion.
+*/
+
 @theme {
-  --color-background: #0f1117;
-  --color-foreground: #e1e4ea;
-  --color-card: #1a1d2e;
-  --color-card-foreground: #e1e4ea;
-  --color-border: #2a2d3e;
-  --color-muted: #8b8fa7;
-  --color-accent: #5b7fff;
-  --color-accent-foreground: #ffffff;
-  --color-destructive: #f87171;
-  --color-success: #34d399;
-  --color-warning: #fbbf24;
-  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --color-background: #080c14;
+  --color-card: #0e1322;
+  --color-elevated: #111827;
+  --color-border: #1d2440;
+  --color-border-light: #252d4a;
+  --color-foreground: #e2e6f2;
+  --color-muted: #535b7a;
+  --color-muted-light: #717ba3;
+  --color-accent: #d4a84b;
+  --color-accent-emerald: #d4a84b;
+  --color-accent-glow: rgba(212, 168, 75, 0.25);
+  --color-accent-blue: #3b82f6;
+  --color-success: #2ecc71;
+  --color-warning: #f0a020;
+  --color-destructive: #e8553d;
+  --color-chart-1: #d4a84b;
+  --color-chart-2: #3b82f6;
+  --color-chart-3: #2ecc71;
+  --color-chart-4: #e8553d;
+
+}
+
+/* ── Base ── */
+html {
+  font-family: var(--font-sans, "DM Sans"), ui-sans-serif, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.font-mono,
+[class*="font-mono"] {
+  font-family: var(--font-mono, "JetBrains Mono"), ui-monospace, monospace !important;
+}
+
+body {
+  background-color: var(--color-background);
+  background-image:
+    radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--color-accent) 8%, transparent) 0%, transparent 70%),
+    radial-gradient(
+      circle at 1px 1px,
+      color-mix(in srgb, var(--color-border) 30%, transparent) 1px,
+      transparent 0
+    );
+  background-size: 100% 100%, 24px 24px;
+  background-position: 0 0, -1px -1px;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-muted);
+}
+
+/* ── Data Ticker Animation ── */
+@keyframes data-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.animate-data-pulse {
+  animation: data-pulse 2s ease-in-out infinite;
+}
+
+/* ── Shimmer Effect on Hover ── */
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+.shimmer-hover {
+  position: relative;
+  overflow: hidden;
+}
+.shimmer-hover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--color-accent) 8%, transparent) 40%,
+    transparent 80%
+  );
+  background-size: 200% 100%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.shimmer-hover:hover::after {
+  opacity: 1;
+  animation: shimmer 2s linear infinite;
+}
+
+/* ── Border Glow ── */
+.card-glow {
+  border: 1px solid var(--color-border);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.card-glow:hover {
+  border-color: color-mix(in srgb, var(--color-accent) 30%, var(--color-border));
+  box-shadow: 0 0 20px -5px var(--color-accent-glow);
+}
+
+/* ── Animated Entry (stagger children) ── */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.stagger-in > * {
+  animation: fade-up 0.5s ease-out both;
+}
+.stagger-in > *:nth-child(1) { animation-delay: 0ms; }
+.stagger-in > *:nth-child(2) { animation-delay: 80ms; }
+.stagger-in > *:nth-child(3) { animation-delay: 160ms; }
+.stagger-in > *:nth-child(4) { animation-delay: 240ms; }
+.stagger-in > *:nth-child(5) { animation-delay: 320ms; }
+.stagger-in > *:nth-child(6) { animation-delay: 400ms; }
+.stagger-in > *:nth-child(7) { animation-delay: 480ms; }
+.stagger-in > *:nth-child(8) { animation-delay: 560ms; }
+
+/* ── Live Data Indicator ── */
+@keyframes live-blink {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.8); }
+}
+.live-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-success);
+  margin-right: 6px;
+  animation: live-blink 1.5s ease-in-out infinite;
+}
+
+/* ── Price Ticker Scroll ── */
+@keyframes ticker-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ── Selection ── */
+::selection {
+  background: color-mix(in srgb, var(--color-accent) 30%, transparent);
+  color: var(--color-foreground);
+}
+
+/* ── Focus rings ── */
+*:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
 }

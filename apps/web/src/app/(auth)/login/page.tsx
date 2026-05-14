@@ -3,15 +3,17 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/providers/auth-provider";
+import { useLocale } from "@/providers/locale-provider";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { KeyRound, Mail, Loader2 } from "lucide-react";
+import { KeyRound, Mail, Loader2, FlaskConical } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login, loginComplete } = useAuth();
+  const { login, loginComplete, demoLogin } = useAuth();
+  const { t } = useLocale();
   const [email, setEmail] = useState("");
   const [step, setStep] = useState<"email" | "passkey" | "otp">("email");
   const [otp, setOtp] = useState("");
@@ -24,7 +26,6 @@ export default function LoginPage() {
       const result = await login(email);
       if (result.method === "passkey") {
         setStep("passkey");
-        // Trigger passkey authentication
         try {
           const assertion = await navigator.credentials.get({
             publicKey: result.options,
@@ -40,18 +41,18 @@ export default function LoginPage() {
             type: "public-key",
             clientExtensionResults: {},
           });
-          toast.success("Logged in successfully");
+          toast.success(t("login.success"));
           router.push("/dashboard");
-        } catch (passkeyErr) {
-          toast.error("Passkey authentication failed. Try OTP instead.");
+        } catch {
+          toast.error(t("login.passkeyFailed"));
           setStep("otp");
         }
       } else if (result.method === "otp") {
         setStep("otp");
-        toast.success("OTP sent to your email");
+        toast.success(t("login.otpSent"));
       }
     } catch (err: any) {
-      toast.error(err.message || "Login failed");
+      toast.error(err.message || t("login.failed"));
     } finally {
       setLoading(false);
     }
@@ -62,10 +63,10 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await loginComplete(email, undefined, otp);
-      toast.success("Logged in successfully");
+      toast.success(t("login.success"));
       router.push("/dashboard");
     } catch (err: any) {
-      toast.error(err.message || "Invalid OTP");
+      toast.error(err.message || t("login.invalidOtp"));
     } finally {
       setLoading(false);
     }
@@ -74,16 +75,16 @@ export default function LoginPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-center">Sign In</CardTitle>
+        <CardTitle className="text-center">{t("login.title")}</CardTitle>
       </CardHeader>
       <CardContent>
         {step === "email" && (
           <form onSubmit={handleEmailSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-2">Email</label>
+              <label className="block text-sm font-medium mb-2">{t("login.email")}</label>
               <Input
                 type="email"
-                placeholder="you@company.com"
+                placeholder={t("login.emailPlaceholder")}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -91,7 +92,7 @@ export default function LoginPage() {
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <KeyRound className="w-4 h-4 mr-2" />}
-              Continue with Passkey
+              {t("login.continuePasskey")}
             </Button>
           </form>
         )}
@@ -100,11 +101,11 @@ export default function LoginPage() {
           <div className="text-center space-y-4">
             <KeyRound className="w-12 h-12 mx-auto text-[var(--color-accent)]" />
             <p className="text-sm text-[var(--color-muted)]">
-              Follow your browser's prompt to authenticate with your passkey.
+              {t("login.passkeyPrompt")}
             </p>
             <Button variant="outline" className="w-full" onClick={() => setStep("otp")}>
               <Mail className="w-4 h-4 mr-2" />
-              Use OTP instead
+              {t("login.useOtp")}
             </Button>
           </div>
         )}
@@ -112,12 +113,12 @@ export default function LoginPage() {
         {step === "otp" && (
           <form onSubmit={handleOtpSubmit} className="space-y-4">
             <p className="text-sm text-[var(--color-muted)] text-center">
-              Enter the 6-digit code sent to {email}
+              {t("login.otpPrompt", { email })}
             </p>
             <Input
               type="text"
               maxLength={6}
-              placeholder="000000"
+              placeholder={t("login.otpPlaceholder")}
               value={otp}
               onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
               className="text-center text-lg tracking-widest"
@@ -125,17 +126,35 @@ export default function LoginPage() {
             />
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
-              Verify OTP
+              {t("login.verifyOtp")}
             </Button>
             <Button variant="ghost" className="w-full" onClick={() => setStep("email")}>
-              Back
+              {t("login.back")}
             </Button>
           </form>
         )}
 
-        <div className="mt-6 text-center text-sm text-[var(--color-muted)]">
+        <div className="mt-4 pt-4 border-t border-[var(--color-border)] space-y-2">
+          <button
+            type="button"
+            onClick={() => {
+              demoLogin();
+              toast.success(t("login.demoSuccess"));
+              router.push("/dashboard");
+            }}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border-2 border-dashed border-yellow-400/40 text-yellow-400/80 hover:bg-yellow-400/5 hover:border-yellow-400/60 hover:text-yellow-400 transition-colors text-sm font-medium"
+          >
+            <FlaskConical className="w-4 h-4" />
+            {t("login.demoLabel")}
+          </button>
+          <p className="text-[10px] text-[var(--color-muted)] text-center">
+            {t("login.demoHint")}
+          </p>
+        </div>
+
+        <div className="mt-4 text-center text-sm text-[var(--color-muted)]">
           <a href="/register" className="text-[var(--color-accent)] hover:underline">
-            Create new account
+            {t("login.createAccount")}
           </a>
         </div>
       </CardContent>

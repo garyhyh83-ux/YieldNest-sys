@@ -84,6 +84,7 @@ contract EmergencyPause is AccessControl {
         redRequiresMultiSig = true;
 
         _grantRole(DEFAULT_ADMIN_ROLE, _multiSigAdmin);
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender); // Deployer gets initial admin
         _grantRole(PAUSER_ROLE, _multiSigAdmin);
 
         currentLevel = PauseLevel.NONE;

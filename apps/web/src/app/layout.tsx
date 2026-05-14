@@ -1,10 +1,25 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import { AuthProvider } from "@/providers/auth-provider";
-import { Toaster } from "sonner";
+import { Outfit, DM_Sans, JetBrains_Mono } from "next/font/google";
+import { AppProviders } from "@/providers/app-providers";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const displayFont = Outfit({
+  subsets: ["latin"],
+  variable: "--font-display",
+  display: "swap",
+});
+
+const bodyFont = DM_Sans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  display: "swap",
+});
+
+const monoFont = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "YieldNest — Enterprise Stablecoin Yield",
@@ -13,13 +28,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark">
-      <body className={`${inter.className} bg-[var(--color-background)] text-[var(--color-foreground)] antialiased`}>
-        <AuthProvider>
-          {children}
-          <Toaster richColors />
-        </AuthProvider>
-      </body>
-    </html>
+    <AppProviders fontClassName={`${displayFont.variable} ${bodyFont.variable} ${monoFont.variable}`}>
+      {children}
+    </AppProviders>
   );
 }

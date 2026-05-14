@@ -66,8 +66,10 @@ contract Deploy is Script {
             PLATFORM_FEE_BPS,
             MIN_DEPOSIT
         );
-        vault.setAllocationEngine(allocEngine);
+        // Order matters: setPauseRegistry first (caller is still allocationEngine from constructor),
+        // then transfer allocationEngine to the designated address.
         vault.setPauseRegistry(address(emergencyPause));
+        vault.setAllocationEngine(allocEngine);
         console.log("YieldNestVault deployed at:", address(vault));
 
         // 5. Deploy YieldNestPaymaster
