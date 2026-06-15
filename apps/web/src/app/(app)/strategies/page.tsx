@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useAccount, useConnect } from "wagmi";
 import { useLocale } from "@/providers/locale-provider";
+import { useMounted } from "@/hooks/use-mounted";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -88,13 +89,14 @@ function StrategyCard({ id }: { id: number }) {
 }
 
 export default function StrategiesPage() {
+  const mounted = useMounted();
   const { t } = useLocale();
   const { isConnected } = useAccount();
   const { connect, connectors } = useConnect();
   const { data: strategyCount } = useStrategyCount();
   const count = strategyCount ? Number(strategyCount as bigint) : 0;
 
-  if (!isConnected) {
+  if (!mounted || !isConnected) {
     return (
       <div className="space-y-6">
         <div>

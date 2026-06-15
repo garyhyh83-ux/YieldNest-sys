@@ -4,6 +4,7 @@ import { useAccount } from "wagmi";
 import { useLocale } from "@/providers/locale-provider";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { DollarSign, TrendingUp, CalendarDays, Percent, Layers, Activity } from "lucide-react";
+import { useMounted } from "@/hooks/use-mounted";
 import {
   useVaultTotalValue,
   useVaultUserShares,
@@ -13,8 +14,11 @@ import {
 } from "@/lib/web3/contracts";
 
 export default function DashboardPage() {
+  const mounted = useMounted();
   const { address, isConnected } = useAccount();
   const { t } = useLocale();
+
+  const connected = mounted && isConnected;
 
   const { data: totalValue } = useVaultTotalValue();
   const { data: userShares } = useVaultUserShares(address);
@@ -33,10 +37,10 @@ export default function DashboardPage() {
         <div>
           <h1 className="font-display text-[28px] font-bold tracking-tight">{t("dashboard.title")}</h1>
           <p className="text-xs font-mono text-[var(--color-muted)] mt-1.5 tracking-widest uppercase">
-            {t("dashboard.subtitle")} · {new Date().toISOString().slice(0, 10)}
+            {t("dashboard.subtitle")}{mounted ? ` · ${new Date().toISOString().slice(0, 10)}` : ""}
           </p>
         </div>
-        {isConnected ? (
+        {connected ? (
           <div className="flex items-center gap-3 px-4 py-2 rounded-lg bg-[var(--color-success)]/10 border border-[var(--color-success)]/20">
             <span className="live-dot" />
             <span className="text-xs font-mono text-[var(--color-success)] font-medium tracking-wide">CONNECTED</span>
@@ -58,14 +62,14 @@ export default function DashboardPage() {
             </div>
             <div>
               <p className="text-xs font-mono text-[var(--color-muted)] tracking-widest uppercase">
-                {isConnected ? t("dashboard.walletConnected") : t("dashboard.connectWallet")}
+                {connected ? t("dashboard.walletConnected") : t("dashboard.connectWallet")}
               </p>
               <p className="text-sm text-[var(--color-foreground)] mt-0.5 font-mono">
-                {isConnected ? `${address?.slice(0, 8)}...${address?.slice(-6)}` : t("dashboard.connectPrompt")}
+                {connected ? `${address?.slice(0, 8)}...${address?.slice(-6)}` : t("dashboard.connectPrompt")}
               </p>
             </div>
           </div>
-          {isConnected && (
+          {connected && (
             <div className="text-right">
               <p className="text-[10px] font-mono text-[var(--color-muted)] tracking-widest uppercase">{t("dashboard.yourPosition")}</p>
               <p className="font-mono text-xl font-semibold text-[var(--color-foreground)]">
@@ -147,7 +151,7 @@ export default function DashboardPage() {
           <CardTitle>{t("dashboard.recentActivity")}</CardTitle>
         </CardHeader>
         <CardContent>
-          {isConnected ? (
+          {connected ? (
             <div className="space-y-2">
               <div className="flex items-center justify-between py-3 px-3 rounded-lg bg-[var(--color-background)]/50">
                 <div className="flex items-center gap-3">

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useAccount, useConnect } from "wagmi";
 import { useLocale } from "@/providers/locale-provider";
+import { useMounted } from "@/hooks/use-mounted";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,6 +24,7 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
 export default function DepositPage() {
+  const mounted = useMounted();
   const { t } = useLocale();
   const { address, isConnected } = useAccount();
   const { connect, connectors } = useConnect();
@@ -80,7 +82,7 @@ export default function DepositPage() {
     }
   };
 
-  if (!isConnected) {
+  if (!mounted || !isConnected) {
     return (
       <div className="space-y-6">
         <div>

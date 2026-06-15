@@ -73,3 +73,30 @@ export interface ApprovalPolicyCreateRequest {
   policyType: ApprovalType;
   rules: PolicyRule[];
 }
+
+export interface ApprovalRequest {
+  approvalType: ApprovalType;
+  payload: Record<string, unknown>;
+  idempotencyKey?: string;
+  amount: string;
+}
+
+export interface ApprovalListItem extends Approval {
+  voteCount: number;
+  userVote?: VoteType;
+}
+
+export interface ApprovalDetail {
+  approval: Approval;
+  votes: ApprovalVote[];
+}
+
+export interface PaginatedApprovalResponse {
+  success: true;
+  data: Approval[];
+  pagination: {
+    limit: number;
+    offset: number;
+    total: number;
+  };
+}

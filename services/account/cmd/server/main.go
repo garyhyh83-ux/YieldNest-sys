@@ -1,12 +1,14 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/yieldnest/account-service/internal/config"
@@ -34,15 +36,28 @@ func main() {
 	accountRepo := repository.NewAccountRepo()
 	whitelistRepo := repository.NewWhitelistRepo()
 	auditLogRepo := repository.NewAuditLogRepo()
+	approvalPolicyRepo := repository.NewApprovalPolicyRepo()
+	approvalRepo := repository.NewApprovalRepo()
 
 	// Initialize services
 	enterpriseSvc := service.NewEnterpriseService(enterpriseRepo, auditLogRepo)
 	memberSvc := service.NewMemberService(userRepo, auditLogRepo)
+	approvalPolicySvc := service.NewApprovalPolicyService(approvalPolicyRepo, auditLogRepo)
+	notificationSvc := service.NewNotificationService()
+	approvalSvc := service.NewApprovalService(approvalRepo, approvalPolicySvc, auditLogRepo, notificationSvc)
+	webhookSvc := service.NewWebhookService()
 
 	// Initialize handlers
 	enterpriseH := handler.NewEnterpriseHandler(enterpriseSvc)
 	memberH := handler.NewMemberHandler(memberSvc)
 	accountH := handler.NewAccountHandler(accountRepo, whitelistRepo)
+	approvalH := handler.NewApprovalHandler(approvalSvc)
+	approvalPolicyH := handler.NewApprovalPolicyHandler(approvalPolicySvc)
+	reportSvc := service.NewReportService(auditLogRepo)
+	reportH := handler.NewReportHandler(reportSvc, auditLogRepo)
+	apiKeyH := handler.NewApiKeyHandler()
+	webhookH := handler.NewWebhookHandler(webhookSvc)
+	erpH := handler.NewERPHandler()
 
 	// Build router
 	r := chi.NewRouter()
@@ -66,9 +81,36 @@ func main() {
 		r.Mount("/enterprises", enterpriseH.Routes())
 		r.Route("/enterprises/{id}", func(r chi.Router) {
 			r.Mount("/members", memberH.Routes())
+			r.Mount("/approvals", approvalH.Routes())
+			r.Mount("/policies", approvalPolicyH.Routes())
+			r.Mount("/reports", reportH.Routes())
+			r.Mount("/api-keys", apiKeyH.Routes())
+			r.Mount("/webhooks", webhookH.Routes())
 		})
 		r.Mount("/accounts", accountH.Routes())
+		r.Route("/enterprises/{id}", func(r chi.Router) {
+			r.Mount("/erp", erpH.Routes())
+		})
 	})
+
+	// API v1 — ERP endpoints (API key auth, no enterprise URL param)
+	r.Route("/api/v1", func(r chi.Router) {
+		r.Use(middleware.APIKeyOrJWTAuth)
+		r.Mount("/erp", erpH.Routes())
+	})
+
+	// Background: expire stale approvals every 60 seconds
+	go func() {
+		for {
+			time.Sleep(60 * time.Second)
+			expired, err := approvalSvc.CheckTimeout(context.Background())
+			if err != nil {
+				log.Printf("Approval timeout check error: %v", err)
+			} else if expired > 0 {
+				log.Printf("Expired %d stale approvals", expired)
+			}
+		}
+	}()
 
 	// Start server
 	addr := fmt.Sprintf(":%d", cfg.Port)

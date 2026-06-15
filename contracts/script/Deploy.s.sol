@@ -8,6 +8,7 @@ import {AccountRegistry} from "../src/core/AccountRegistry.sol";
 import {YieldNestPaymaster} from "../src/paymaster/YieldNestPaymaster.sol";
 import {EmergencyPause} from "../src/governance/EmergencyPause.sol";
 import {HelperConfig} from "./HelperConfig.s.sol";
+import {Vm} from "forge-std/Vm.sol";
 
 /// @title DeployYieldNest
 /// @notice Full deployment script for YieldNest protocol on a target chain.
@@ -98,5 +99,33 @@ contract Deploy is Script {
         console.log("YieldNestPaymaster:", address(paymaster));
         console.log("Platform Owner:    ", platformOwner);
         console.log("Alloc Engine:      ", allocEngine);
+
+        // Write per-chain deployment artifact
+        string memory chainName = getChainName(block.chainid);
+        string memory artifactPath = string(
+            abi.encodePacked("deployments/", chainName, ".json")
+        );
+        string memory json = "deployment_artifact";
+        vm.serializeUint(json, "chainId", block.chainid);
+        vm.serializeAddress(json, "usdc", config.usdc);
+        vm.serializeAddress(json, "vault", address(vault));
+        vm.serializeAddress(json, "factory", address(factory));
+        vm.serializeAddress(json, "registry", address(registry));
+        vm.serializeAddress(json, "paymaster", address(paymaster));
+        vm.serializeAddress(json, "emergencyPause", address(emergencyPause));
+        string memory output = vm.serializeString(json, "chainName", chainName);
+        vm.writeJson(output, artifactPath);
+        console.log("Artifact written to:", artifactPath);
+    }
+
+    function getChainName(uint256 chainId) internal pure returns (string memory) {
+        if (chainId == 84532) return "base-sepolia";
+        if (chainId == 8453) return "base-mainnet";
+        if (chainId == 421614) return "arbitrum-sepolia";
+        if (chainId == 42161) return "arbitrum-mainnet";
+        if (chainId == 11155111) return "ethereum-sepolia";
+        if (chainId == 1) return "ethereum-mainnet";
+        if (chainId == 31337) return "localhost";
+        return "unknown";
     }
 }

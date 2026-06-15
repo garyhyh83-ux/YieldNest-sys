@@ -47,6 +47,24 @@ contract HelperConfig is Script {
             chainlinkEthUsd: 0xd30E2101a97DCbAEbCBC04f0f14d007026C4cd39
         });
 
+        // Arbitrum Mainnet
+        chainConfigs[42161] = NetworkConfig({
+            usdc: 0xaf88d065e77c8cC2239327C5EDb3A432268e5831,
+            entryPoint: address(0), // TBD
+            safeSingleton: address(0), // TBD
+            safeProxyFactory: address(0), // TBD
+            chainlinkEthUsd: 0x639Fe6ab55C921f74e7fac1ee960C0B6293ba612
+        });
+
+        // Ethereum Sepolia
+        chainConfigs[11155111] = NetworkConfig({
+            usdc: 0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238,
+            entryPoint: 0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789,
+            safeSingleton: 0x41675C099F32341bf84BFc5382aF534df5C7461a,
+            safeProxyFactory: 0x4E1DcF7aD4E35CF935a89cb17aBD0F3c2489857e,
+            chainlinkEthUsd: 0x694AA1769357215DE4FAC081bf1f309aDC325306
+        });
+
         activeNetworkConfig = chainConfigs[84532]; // Default to Base Sepolia
     }
 
