@@ -21,7 +21,8 @@ import {
 import { readContract, writeContract, waitForTransactionReceipt } from "wagmi/actions";
 import { wagmiConfig } from "@/lib/web3/config";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, Wallet, ArrowDownToLine, TrendingUp, Layers } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function DepositPage() {
   const mounted = useMounted();
@@ -84,16 +85,33 @@ export default function DepositPage() {
 
   if (!mounted || !isConnected) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-8">
         <div>
-          <h1 className="text-2xl font-bold">{t("deposit.title")}</h1>
-          <p className="text-[var(--color-muted)] mt-1">{t("deposit.subtitle")}</p>
+          <h1 className="font-display text-[28px] font-bold text-[var(--color-text)]">
+            {t("deposit.title")}
+          </h1>
+          <div className="accent-rule my-3" />
+          <p className="font-mono text-sm text-[var(--color-muted)]">
+            {t("deposit.subtitle")}
+          </p>
         </div>
-        <Card>
-          <CardContent className="p-10 text-center space-y-4">
-            <p className="text-[var(--color-muted)]">{t("deposit.connectWallet")}</p>
+
+        <Card className="rounded-xl bg-[var(--color-card)] card-glow">
+          <CardContent className="p-12 text-center space-y-6">
+            <div className="mx-auto w-16 h-16 rounded-full bg-[var(--color-accent)]/4 border border-[var(--color-accent)]/10 flex items-center justify-center">
+              <Wallet className="w-7 h-7 text-[var(--color-accent)]" />
+            </div>
+            <p className="text-[var(--color-muted)] text-lg">
+              {t("deposit.connectWallet")}
+            </p>
             {connectors.length > 0 && connectors[0] && (
-              <Button onClick={() => connect({ connector: connectors[0]! })}>{t("deposit.connect")}</Button>
+              <Button
+                variant="default"
+                size="lg"
+                onClick={() => connect({ connector: connectors[0]! })}
+              >
+                {t("deposit.connect")}
+              </Button>
             )}
           </CardContent>
         </Card>
@@ -102,88 +120,138 @@ export default function DepositPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold">{t("deposit.title")}</h1>
-        <p className="text-[var(--color-muted)] mt-1">{t("deposit.subtitle")}</p>
+        <h1 className="font-display text-[28px] font-bold text-[var(--color-text)]">
+          {t("deposit.title")}
+        </h1>
+        <div className="accent-rule my-3" />
+        <p className="font-mono text-sm text-[var(--color-muted)]">
+          {t("deposit.subtitle")}
+        </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2 space-y-4">
-          <Card>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Main deposit form */}
+        <div className="lg:col-span-2 space-y-6">
+          <Card className="card-glow shimmer-hover corner-accent">
             <CardHeader>
-              <CardTitle className="text-sm">{t("deposit.depositBtn")}</CardTitle>
+              <CardTitle className="font-display text-base flex items-center gap-2">
+                <ArrowDownToLine className="w-4 h-4 text-[var(--color-accent)]" />
+                {t("deposit.depositBtn")}
+              </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-6">
               <div>
                 <label className="text-sm text-[var(--color-muted)]">
                   {t("deposit.amountLabel", { min: minDepositFormatted })}
                 </label>
-                <div className="flex gap-2 mt-1">
+                <div className="flex gap-2 mt-2">
                   <Input
                     type="number"
                     placeholder={t("deposit.amountPlaceholder")}
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                     disabled={loading}
+                    className="font-mono"
                   />
-                  <Button variant="outline" onClick={() => setAmount(balanceFormatted)} disabled={loading}>
+                  <Button
+                    variant="vault"
+                    size="sm"
+                    onClick={() => setAmount(balanceFormatted)}
+                    disabled={loading}
+                  >
                     {t("deposit.max")}
                   </Button>
                 </div>
               </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-[var(--color-muted)]">{t("deposit.walletBalance")}</span>
-                <span>{Number(balanceFormatted).toLocaleString()} USDC</span>
+
+              <div className="flex items-center justify-between text-sm p-3 rounded-lg bg-[var(--color-accent)]/4 border border-[var(--color-accent)]/10">
+                <span className="text-[var(--color-muted)]">
+                  {t("deposit.walletBalance")}
+                </span>
+                <span className="font-mono">
+                  {Number(balanceFormatted).toLocaleString()} USDC
+                </span>
               </div>
+
               <Button
                 className="w-full"
+                variant="default"
+                size="lg"
                 onClick={handleDeposit}
-                disabled={loading || !amount || Number(amount) < Number(minDepositFormatted)}
+                disabled={
+                  loading ||
+                  !amount ||
+                  Number(amount) < Number(minDepositFormatted)
+                }
               >
-                {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                {loading && (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin text-[var(--color-accent)]" />
+                )}
                 {loading ? t("deposit.processing") : t("deposit.depositBtn")}
               </Button>
             </CardContent>
           </Card>
         </div>
 
+        {/* Sidebar */}
         <div className="space-y-4">
-          <Card>
+          <Card className="card-glow shimmer-hover">
             <CardHeader>
-              <CardTitle className="text-sm">{t("deposit.strategy")}</CardTitle>
+              <CardTitle className="font-display text-sm flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-[var(--color-accent)]" />
+                {t("deposit.strategy")}
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-sm space-y-2">
+              <div className="text-sm space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-[var(--color-muted)]">{t("deposit.strategySelected")}</span>
-                  <span>{t("deposit.strategyMock")}</span>
+                  <span className="text-[var(--color-muted)]">
+                    {t("deposit.strategySelected")}
+                  </span>
+                  <span className="font-mono">{t("deposit.strategyMock")}</span>
                 </div>
+                <div className="accent-rule my-2 opacity-50" />
                 <div className="flex justify-between">
-                  <span className="text-[var(--color-muted)]">{t("deposit.expectedApy")}</span>
-                  <span className="text-green-400">4.50%</span>
+                  <span className="text-[var(--color-muted)]">
+                    {t("deposit.expectedApy")}
+                  </span>
+                  <span className="font-mono text-emerald-500">4.50%</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-[var(--color-muted)]">Risk</span>
-                  <span>{t("deposit.riskLow")}</span>
+                  <span className="font-mono">{t("deposit.riskLow")}</span>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="card-glow shimmer-hover">
             <CardHeader>
-              <CardTitle className="text-sm">{t("deposit.vaultStats")}</CardTitle>
+              <CardTitle className="font-display text-sm flex items-center gap-2">
+                <Layers className="w-4 h-4 text-[var(--color-accent)]" />
+                {t("deposit.vaultStats")}
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-sm space-y-2">
+              <div className="text-sm space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-[var(--color-muted)]">{t("deposit.tvl")}</span>
-                  <span>{totalValue ? formatUsdc(totalValue as bigint) : "0"} USDC</span>
+                  <span className="text-[var(--color-muted)]">
+                    {t("deposit.tvl")}
+                  </span>
+                  <span className="font-mono">
+                    {totalValue ? formatUsdc(totalValue as bigint) : "0"} USDC
+                  </span>
                 </div>
+                <div className="accent-rule my-2 opacity-50" />
                 <div className="flex justify-between">
-                  <span className="text-[var(--color-muted)]">{t("deposit.strategiesCount")}</span>
-                  <span>{strategyCount ? String(strategyCount) : "0"}</span>
+                  <span className="text-[var(--color-muted)]">
+                    {t("deposit.strategiesCount")}
+                  </span>
+                  <span className="font-mono">
+                    {strategyCount ? String(strategyCount) : "0"}
+                  </span>
                 </div>
               </div>
             </CardContent>

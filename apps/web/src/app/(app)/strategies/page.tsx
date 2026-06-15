@@ -15,7 +15,8 @@ import {
 import { writeContract, waitForTransactionReceipt } from "wagmi/actions";
 import { wagmiConfig } from "@/lib/web3/config";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, Layers } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 function StrategyCard({ id }: { id: number }) {
   const { t } = useLocale();
@@ -50,37 +51,79 @@ function StrategyCard({ id }: { id: number }) {
   };
 
   return (
-    <Card>
+    <Card className="corner-accent overflow-hidden">
+      {/* Status accent strip at top */}
+      <div
+        className={cn(
+          "h-0.5",
+          isActive ? "bg-[var(--color-success)]" : "bg-[var(--color-border)]"
+        )}
+      />
+
       <CardHeader>
-        <CardTitle className="text-sm flex items-center justify-between">
-          <span>{t("strategies.strategyN", { n: id + 1 })}</span>
-          <span className={`px-2 py-0.5 rounded text-xs ${isActive ? "bg-green-400/10 text-green-400" : "bg-red-400/10 text-red-400"}`}>
+        <CardTitle className="flex items-center justify-between">
+          <span className="text-[var(--color-foreground)] text-xs font-semibold">
+            {t("strategies.strategyN", { n: id + 1 })}
+          </span>
+          <span
+            className={cn(
+              "px-2.5 py-0.5 rounded-full text-[10px] font-mono uppercase tracking-[0.12em] border",
+              isActive
+                ? "bg-[var(--color-success)]/8 text-[var(--color-success)] border-[var(--color-success)]/20"
+                : "bg-[var(--color-muted)]/6 text-[var(--color-muted)] border-[var(--color-border)]/50"
+            )}
+          >
             {isActive ? t("strategies.active") : t("strategies.inactive")}
           </span>
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-3">
-        <div className="text-sm space-y-1">
-          <div className="flex justify-between">
-            <span className="text-[var(--color-muted)]">{t("strategies.adapter")}</span>
-            <span className="font-mono text-xs">{(adapter as string).slice(0, 10)}...</span>
+
+      <CardContent className="space-y-4">
+        {/* Strategy detail rows */}
+        <div className="space-y-2 text-sm">
+          <div className="flex justify-between items-center">
+            <span className="text-[10px] font-mono text-[var(--color-muted)] tracking-[0.12em] uppercase">
+              {t("strategies.adapter")}
+            </span>
+            <span className="font-mono text-xs text-[var(--color-foreground)] tracking-wide">
+              {(adapter as string).slice(0, 10)}...
+            </span>
           </div>
-          <div className="flex justify-between">
-            <span className="text-[var(--color-muted)]">{t("strategies.targetWeight")}</span>
-            <span>{targetPct}%</span>
+          <div className="flex justify-between items-center">
+            <span className="text-[10px] font-mono text-[var(--color-muted)] tracking-[0.12em] uppercase">
+              {t("strategies.targetWeight")}
+            </span>
+            <span className="font-mono text-xs text-[var(--color-foreground)]">
+              {targetPct}%
+            </span>
           </div>
-          <div className="flex justify-between">
-            <span className="text-[var(--color-muted)]">{t("strategies.currentWeight")}</span>
-            <span>{currentPct}%</span>
+          <div className="flex justify-between items-center">
+            <span className="text-[10px] font-mono text-[var(--color-muted)] tracking-[0.12em] uppercase">
+              {t("strategies.currentWeight")}
+            </span>
+            <span className="font-mono text-xs text-[var(--color-foreground)]">
+              {currentPct}%
+            </span>
           </div>
         </div>
 
-        <div className="w-full h-2 bg-[var(--color-background)] rounded-full overflow-hidden">
-          <div className="h-full bg-[var(--color-accent)] rounded-full transition-all" style={{ width: `${Math.min(currentPct, 100)}%` }} />
+        {/* Progress bar — gold fill */}
+        <div className="w-full h-2 bg-[var(--color-background)] rounded-full overflow-hidden border border-[var(--color-border)]/40">
+          <div
+            className="h-full bg-[var(--color-accent)] rounded-full transition-all duration-700 ease-out"
+            style={{ width: `${Math.min(currentPct, 100)}%` }}
+          />
         </div>
 
-        <Button variant="outline" size="sm" className="w-full" onClick={handleClaimYield} disabled={claiming}>
-          {claiming && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+        {/* Claim yield button — vault architectural style */}
+        <Button
+          variant="vault"
+          size="sm"
+          className="w-full"
+          onClick={handleClaimYield}
+          disabled={claiming}
+        >
+          {claiming && <Loader2 className="w-3.5 h-3.5 mr-2 animate-spin" />}
           {claiming ? t("strategies.claiming") : t("strategies.claimYield")}
         </Button>
       </CardContent>
@@ -96,38 +139,80 @@ export default function StrategiesPage() {
   const { data: strategyCount } = useStrategyCount();
   const count = strategyCount ? Number(strategyCount as bigint) : 0;
 
+  /* ── Disconnected / loading state ── */
   if (!mounted || !isConnected) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-8">
+        {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold">{t("strategies.title")}</h1>
-          <p className="text-[var(--color-muted)] mt-1">{t("strategies.subtitle")}</p>
+          <h1 className="font-display text-[28px] font-bold tracking-tight text-[var(--color-foreground)]">
+            {t("strategies.title")}
+          </h1>
+          <div className="flex items-center gap-2.5 mt-2">
+            <div className="accent-rule" />
+            <p className="text-[11px] font-mono text-[var(--color-muted)] tracking-[0.2em] uppercase">
+              {t("strategies.subtitle")}
+            </p>
+          </div>
         </div>
-        <Card>
-          <CardContent className="p-10 text-center space-y-4">
-            <p className="text-[var(--color-muted)]">{t("strategies.connectWallet")}</p>
+
+        {/* Connect prompt card */}
+        <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-10 corner-accent card-glow">
+          <div className="text-center space-y-5">
+            <div className="w-14 h-14 rounded-xl bg-[var(--color-accent)]/6 border border-[var(--color-accent)]/12 flex items-center justify-center mx-auto relative overflow-hidden">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,color-mix(in_srgb,var(--color-accent)_12%,transparent),transparent_70%)]" />
+              <Layers className="w-6 h-6 text-[var(--color-accent)]/60 relative" />
+            </div>
+            <p className="text-sm text-[var(--color-muted)]">
+              {t("strategies.connectWallet")}
+            </p>
             {connectors.length > 0 && connectors[0] && (
-              <Button onClick={() => connect({ connector: connectors[0]! })}>{t("withdraw.connect")}</Button>
+              <Button onClick={() => connect({ connector: connectors[0]! })}>
+                {t("strategies.connectWallet")}
+              </Button>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     );
   }
 
+  /* ── Connected state ── */
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">{t("strategies.title")}</h1>
-        <p className="text-[var(--color-muted)] mt-1">{t("strategies.subtitle")}</p>
+    <div className="space-y-8 stagger-in">
+      {/* ── Header ── */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="font-display text-[28px] font-bold tracking-tight text-[var(--color-foreground)]">
+            {t("strategies.title")}
+          </h1>
+          <div className="flex items-center gap-2.5 mt-2">
+            <div className="accent-rule" />
+            <p className="text-[11px] font-mono text-[var(--color-muted)] tracking-[0.2em] uppercase">
+              {t("strategies.subtitle")}
+            </p>
+          </div>
+        </div>
+
+        {/* Connection badge */}
+        <div className="flex items-center gap-2.5 px-4 py-2 rounded-lg bg-[var(--color-success)]/8 border border-[var(--color-success)]/15 backdrop-blur-sm">
+          <span className="live-dot !m-0" />
+          <span className="text-[11px] font-mono text-[var(--color-success)] font-medium tracking-[0.15em] uppercase">
+            Connected
+          </span>
+        </div>
       </div>
 
+      {/* ── Strategy Cards Grid ── */}
       {count === 0 ? (
-        <Card>
-          <CardContent className="p-10 text-center">
-            <p className="text-[var(--color-muted)]">{t("strategies.noStrategies")}</p>
-          </CardContent>
-        </Card>
+        <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-10 text-center corner-accent card-glow">
+          <div className="w-14 h-14 rounded-xl bg-[var(--color-foreground)]/3 border border-[var(--color-border)]/30 flex items-center justify-center mx-auto mb-4">
+            <Layers className="w-6 h-6 text-[var(--color-muted)]/30" />
+          </div>
+          <p className="text-[11px] font-mono text-[var(--color-muted)] tracking-[0.15em] uppercase">
+            {t("strategies.noStrategies")}
+          </p>
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {Array.from({ length: count }, (_, i) => (
@@ -136,27 +221,46 @@ export default function StrategiesPage() {
         </div>
       )}
 
-      <Card>
+      {/* ── Yield Summary ── */}
+      <Card className="corner-accent">
         <CardHeader>
-          <CardTitle className="text-sm">{t("strategies.yieldSummary")}</CardTitle>
+          <CardTitle className="text-[var(--color-foreground)] text-xs font-semibold">
+            {t("strategies.yieldSummary")}
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div>
-              <p className="text-[var(--color-muted)]">{t("strategies.platformFee")}</p>
-              <p className="font-semibold">{t("strategies.platformFeeValue")}</p>
+          <div className="grid grid-cols-2 gap-5 text-sm">
+            <div className="space-y-1">
+              <p className="text-[10px] font-mono text-[var(--color-muted)] tracking-[0.12em] uppercase">
+                {t("strategies.platformFee")}
+              </p>
+              <p className="font-mono text-sm font-semibold text-[var(--color-foreground)]">
+                {t("strategies.platformFeeValue")}
+              </p>
             </div>
-            <div>
-              <p className="text-[var(--color-muted)]">{t("strategies.compoundFrequency")}</p>
-              <p className="font-semibold">{t("strategies.compoundValue")}</p>
+            <div className="space-y-1">
+              <p className="text-[10px] font-mono text-[var(--color-muted)] tracking-[0.12em] uppercase">
+                {t("strategies.compoundFrequency")}
+              </p>
+              <p className="font-mono text-sm font-semibold text-[var(--color-foreground)]">
+                {t("strategies.compoundValue")}
+              </p>
             </div>
-            <div>
-              <p className="text-[var(--color-muted)]">{t("strategies.strategiesActive")}</p>
-              <p className="font-semibold">{count}</p>
+            <div className="space-y-1">
+              <p className="text-[10px] font-mono text-[var(--color-muted)] tracking-[0.12em] uppercase">
+                {t("strategies.strategiesActive")}
+              </p>
+              <p className="font-mono text-sm font-semibold text-[var(--color-foreground)]">
+                {count}
+              </p>
             </div>
-            <div>
-              <p className="text-[var(--color-muted)]">{t("strategies.withdrawalTime")}</p>
-              <p className="font-semibold">{t("strategies.withdrawalTimeValue")}</p>
+            <div className="space-y-1">
+              <p className="text-[10px] font-mono text-[var(--color-muted)] tracking-[0.12em] uppercase">
+                {t("strategies.withdrawalTime")}
+              </p>
+              <p className="font-mono text-sm font-semibold text-[var(--color-foreground)]">
+                {t("strategies.withdrawalTimeValue")}
+              </p>
             </div>
           </div>
         </CardContent>

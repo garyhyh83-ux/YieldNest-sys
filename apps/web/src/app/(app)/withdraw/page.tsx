@@ -17,7 +17,8 @@ import {
 import { writeContract, waitForTransactionReceipt } from "wagmi/actions";
 import { wagmiConfig } from "@/lib/web3/config";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, Wallet, ArrowUpFromLine, Coins } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function WithdrawPage() {
   const mounted = useMounted();
@@ -43,9 +44,10 @@ export default function WithdrawPage() {
     setLoading(true);
     try {
       const usdcAmount = Number(amount) * 1e6;
-      const sharesToRedeem = tsNum > 0 && tvNum > 0
-        ? BigInt(Math.floor((usdcAmount * tsNum) / tvNum))
-        : BigInt(Math.floor(usdcAmount));
+      const sharesToRedeem =
+        tsNum > 0 && tvNum > 0
+          ? BigInt(Math.floor((usdcAmount * tsNum) / tvNum))
+          : BigInt(Math.floor(usdcAmount));
 
       toast.info(t("withdraw.withdrawing"));
       const hash = await writeContract(wagmiConfig, {
@@ -55,10 +57,13 @@ export default function WithdrawPage() {
         args: [sharesToRedeem, recipient as `0x${string}`, 0n],
       });
       await waitForTransactionReceipt(wagmiConfig, { hash });
-      toast.success(t("withdraw.success", { amount, address: recipient.slice(0, 10) }));
+      toast.success(
+        t("withdraw.success", { amount, address: recipient.slice(0, 10) }),
+      );
       setAmount("");
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : t("withdraw.failed");
+      const message =
+        err instanceof Error ? err.message : t("withdraw.failed");
       toast.error(message);
     } finally {
       setLoading(false);
@@ -67,16 +72,33 @@ export default function WithdrawPage() {
 
   if (!mounted || !isConnected) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-8">
         <div>
-          <h1 className="text-2xl font-bold">{t("withdraw.title")}</h1>
-          <p className="text-[var(--color-muted)] mt-1">{t("withdraw.subtitle")}</p>
+          <h1 className="font-display text-[28px] font-bold text-[var(--color-text)]">
+            {t("withdraw.title")}
+          </h1>
+          <div className="accent-rule my-3" />
+          <p className="font-mono text-sm text-[var(--color-muted)]">
+            {t("withdraw.subtitle")}
+          </p>
         </div>
-        <Card>
-          <CardContent className="p-10 text-center space-y-4">
-            <p className="text-[var(--color-muted)]">{t("withdraw.connectWallet")}</p>
+
+        <Card className="rounded-xl bg-[var(--color-card)] card-glow">
+          <CardContent className="p-12 text-center space-y-6">
+            <div className="mx-auto w-16 h-16 rounded-full bg-[var(--color-accent)]/4 border border-[var(--color-accent)]/10 flex items-center justify-center">
+              <Wallet className="w-7 h-7 text-[var(--color-accent)]" />
+            </div>
+            <p className="text-[var(--color-muted)] text-lg">
+              {t("withdraw.connectWallet")}
+            </p>
             {connectors.length > 0 && connectors[0] && (
-              <Button onClick={() => connect({ connector: connectors[0]! })}>{t("withdraw.connect")}</Button>
+              <Button
+                variant="default"
+                size="lg"
+                onClick={() => connect({ connector: connectors[0]! })}
+              >
+                {t("withdraw.connect")}
+              </Button>
             )}
           </CardContent>
         </Card>
@@ -85,76 +107,128 @@ export default function WithdrawPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold">{t("withdraw.title")}</h1>
-        <p className="text-[var(--color-muted)] mt-1">{t("withdraw.subtitle")}</p>
+        <h1 className="font-display text-[28px] font-bold text-[var(--color-text)]">
+          {t("withdraw.title")}
+        </h1>
+        <div className="accent-rule my-3" />
+        <p className="font-mono text-sm text-[var(--color-muted)]">
+          {t("withdraw.subtitle")}
+        </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2 space-y-4">
-          <Card>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Main withdraw form */}
+        <div className="lg:col-span-2 space-y-6">
+          <Card className="card-glow shimmer-hover corner-accent">
             <CardHeader>
-              <CardTitle className="text-sm">{t("withdraw.withdrawBtn")}</CardTitle>
+              <CardTitle className="font-display text-base flex items-center gap-2">
+                <ArrowUpFromLine className="w-4 h-4 text-[var(--color-accent)]" />
+                {t("withdraw.withdrawBtn")}
+              </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-6">
               <div>
-                <label className="text-sm text-[var(--color-muted)]">{t("withdraw.amountLabel")}</label>
-                <div className="flex gap-2 mt-1">
+                <label className="text-sm text-[var(--color-muted)]">
+                  {t("withdraw.amountLabel")}
+                </label>
+                <div className="flex gap-2 mt-2">
                   <Input
                     type="number"
                     placeholder={t("withdraw.amountPlaceholder")}
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                     disabled={loading}
+                    className="font-mono"
                   />
-                  <Button variant="outline" onClick={() => setAmount(String(maxWithdraw))} disabled={loading}>
+                  <Button
+                    variant="vault"
+                    size="sm"
+                    onClick={() => setAmount(String(maxWithdraw))}
+                    disabled={loading}
+                  >
                     {t("withdraw.max")}
                   </Button>
                 </div>
               </div>
 
               <div>
-                <label className="text-sm text-[var(--color-muted)]">{t("withdraw.destAddress")}</label>
+                <label className="text-sm text-[var(--color-muted)]">
+                  {t("withdraw.destAddress")}
+                </label>
                 <Input
                   type="text"
                   placeholder={t("withdraw.destPlaceholder")}
                   value={recipient}
                   onChange={(e) => setRecipient(e.target.value)}
                   disabled={loading}
+                  className="font-mono mt-2"
                 />
               </div>
 
               <Button
                 className="w-full"
+                variant="default"
+                size="lg"
                 onClick={handleWithdraw}
-                disabled={loading || !amount || !recipient || Number(amount) <= 0}
+                disabled={
+                  loading || !amount || !recipient || Number(amount) <= 0
+                }
               >
-                {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                {loading ? t("deposit.processing") : t("withdraw.withdrawBtn")}
+                {loading && (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin text-[var(--color-accent)]" />
+                )}
+                {loading
+                  ? t("withdraw.withdrawing")
+                  : t("withdraw.withdrawBtn")}
               </Button>
             </CardContent>
           </Card>
         </div>
 
+        {/* Sidebar */}
         <div className="space-y-4">
-          <Card>
+          <Card className="card-glow shimmer-hover">
             <CardHeader>
-              <CardTitle className="text-sm">{t("withdraw.yourPosition")}</CardTitle>
+              <CardTitle className="font-display text-sm flex items-center gap-2">
+                <Coins className="w-4 h-4 text-[var(--color-accent)]" />
+                {t("withdraw.yourPosition")}
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-sm space-y-2">
+              <div className="text-sm space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-[var(--color-muted)]">{t("withdraw.vaultShares")}</span>
-                  <span>{sharesNum.toLocaleString()}</span>
+                  <span className="text-[var(--color-muted)]">
+                    {t("withdraw.vaultShares")}
+                  </span>
+                  <span className="font-mono">
+                    {sharesNum.toLocaleString()}
+                  </span>
                 </div>
+                <div className="accent-rule my-2 opacity-50" />
                 <div className="flex justify-between">
-                  <span className="text-[var(--color-muted)]">{t("withdraw.usdcValue")}</span>
-                  <span>${(userPosition / 1e6).toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
+                  <span className="text-[var(--color-muted)]">
+                    {t("withdraw.usdcValue")}
+                  </span>
+                  <span className="font-mono">
+                    $
+                    {(userPosition / 1e6).toLocaleString(undefined, {
+                      maximumFractionDigits: 2,
+                    })}
+                  </span>
                 </div>
+                <div className="accent-rule my-2 opacity-50" />
                 <div className="flex justify-between">
-                  <span className="text-[var(--color-muted)]">{t("withdraw.available")}</span>
-                  <span>{maxWithdraw.toLocaleString(undefined, { maximumFractionDigits: 2 })} USDC</span>
+                  <span className="text-[var(--color-muted)]">
+                    {t("withdraw.available")}
+                  </span>
+                  <span className="font-mono">
+                    {maxWithdraw.toLocaleString(undefined, {
+                      maximumFractionDigits: 2,
+                    })}{" "}
+                    USDC
+                  </span>
                 </div>
               </div>
             </CardContent>

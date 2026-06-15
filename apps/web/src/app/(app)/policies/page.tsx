@@ -5,6 +5,7 @@ import { useAuth } from "@/providers/auth-provider";
 import { useLocale } from "@/providers/locale-provider";
 import type { TranslationKey } from "@/lib/i18n/translations";
 import { Shield, Plus, Trash2, ChevronDown, ChevronRight } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 // ── Types ──
 type ApprovalType = "withdrawal" | "whitelist_change" | "role_change" | "strategy_change" | "account_recovery";
@@ -146,42 +147,55 @@ export default function PoliciesPage() {
 
   // ── Render ──
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
+    <div className="max-w-5xl mx-auto space-y-8 stagger-in">
+      {/* ── Page Header ── */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-display font-semibold text-[var(--color-foreground)]">{t("policies.title")}</h1>
-          <p className="text-[var(--color-muted)] text-sm mt-1">{t("policies.subtitle")}</p>
+          <h1 className="font-display font-bold text-[28px] tracking-tight text-[var(--color-foreground)]">
+            {t("policies.title")}
+          </h1>
+          <div className="flex items-center gap-2.5 mt-2">
+            <div className="accent-rule" />
+            <p className="text-[11px] font-mono text-[var(--color-muted)] tracking-[0.2em] uppercase">
+              {t("policies.subtitle")}
+            </p>
+          </div>
         </div>
         <button
           onClick={() => setShowCreate(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--color-accent)]/15 text-[var(--color-accent)] text-[13px] font-medium border border-[var(--color-accent)]/20 hover:bg-[var(--color-accent)]/25 transition-colors"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[var(--color-accent)] text-[var(--color-background)] text-[13px] font-semibold hover:brightness-110 transition-all duration-200 shadow-[0_0_20px_-6px_var(--color-accent-glow)]"
         >
           <Plus className="w-4 h-4" />
           {t("policies.create")}
         </button>
       </div>
 
+      {/* ── Demo Notice ── */}
       {isDemo && (
-        <div className="px-4 py-2.5 rounded-xl bg-[var(--color-accent)]/5 border border-[var(--color-accent)]/15 text-[12px] text-[var(--color-muted-light)] font-mono">
+        <div className="px-4 py-2.5 rounded-lg bg-[var(--color-accent)]/4 border border-[var(--color-accent)]/12 text-[11px] font-mono text-[var(--color-muted-light)] tracking-wide">
           {t("policies.demo")}
         </div>
       )}
 
-      {/* Create form */}
+      {/* ── Create Form ── */}
       {showCreate && (
-        <div className="rounded-2xl border border-[var(--color-accent)]/30 bg-[var(--color-card)]/90 backdrop-blur-sm p-5 space-y-4">
+        <div className="rounded-2xl border border-[var(--color-accent)]/25 bg-[var(--color-card)]/95 backdrop-blur-sm p-6 space-y-5 shadow-[0_0_32px_-12px_var(--color-accent-glow)]">
           <div className="flex items-center gap-3">
-            <Shield className="w-5 h-5 text-[var(--color-accent)]" />
+            <div className="w-10 h-10 rounded-xl bg-[var(--color-accent)]/8 border border-[var(--color-accent)]/15 flex items-center justify-center">
+              <Shield className="w-5 h-5 text-[var(--color-accent)]" />
+            </div>
             <select
               value={createType}
               onChange={(e) => setCreateType(e.target.value as ApprovalType)}
-              className="rounded-lg border border-[var(--color-border)] bg-[#080c14] px-3 py-2 text-[13px] text-[var(--color-foreground)] font-mono focus:outline-none focus:border-[var(--color-accent)]/40"
+              className="rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2 text-[13px] text-[var(--color-foreground)] font-mono focus:outline-none focus:border-[var(--color-accent)]/50 focus:ring-1 focus:ring-[var(--color-accent)]/20 transition-all"
             >
               {(Object.keys(POLICY_TYPE_LABELS) as ApprovalType[]).map((pt) => (
                 <option key={pt} value={pt}>{POLICY_TYPE_LABELS[pt]}</option>
               ))}
             </select>
-            <span className="text-[11px] text-[var(--color-muted)] font-mono">New Policy</span>
+            <span className="text-[11px] font-mono text-[var(--color-muted)] tracking-[0.15em] uppercase">
+              New Policy
+            </span>
           </div>
 
           {createRules.map((rule, i) => (
@@ -196,15 +210,24 @@ export default function PoliciesPage() {
             />
           ))}
 
-          <div className="flex items-center justify-between pt-2 border-t border-[var(--color-border)]/50">
-            <button onClick={addCreateRule} className="flex items-center gap-1.5 text-[12px] text-[var(--color-muted)] hover:text-[var(--color-foreground)] font-mono transition-colors">
+          <div className="flex items-center justify-between pt-3 border-t border-[var(--color-border)]/50">
+            <button
+              onClick={addCreateRule}
+              className="flex items-center gap-1.5 text-[12px] font-mono text-[var(--color-muted)] hover:text-[var(--color-accent)] transition-colors"
+            >
               <Plus className="w-3.5 h-3.5" /> {t("policies.addRule")}
             </button>
             <div className="flex gap-2">
-              <button onClick={() => setShowCreate(false)} className="px-4 py-2 rounded-lg text-[12px] text-[var(--color-muted)] font-mono hover:text-[var(--color-foreground)] transition-colors">
+              <button
+                onClick={() => setShowCreate(false)}
+                className="px-4 py-2 rounded-lg text-[12px] font-mono text-[var(--color-muted)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-foreground)]/4 transition-all"
+              >
                 Cancel
               </button>
-              <button onClick={submitCreate} className="px-5 py-2 rounded-lg bg-[var(--color-accent)]/15 text-[var(--color-accent)] text-[12px] font-medium border border-[var(--color-accent)]/20 hover:bg-[var(--color-accent)]/25 transition-colors">
+              <button
+                onClick={submitCreate}
+                className="px-5 py-2 rounded-lg bg-[var(--color-accent)] text-[var(--color-background)] text-[12px] font-semibold hover:brightness-110 transition-all duration-200 shadow-[0_0_16px_-6px_var(--color-accent-glow)]"
+              >
                 {t("policies.save")}
               </button>
             </div>
@@ -212,11 +235,13 @@ export default function PoliciesPage() {
         </div>
       )}
 
-      {/* Policy list */}
+      {/* ── Policy List ── */}
       {policies.length === 0 ? (
-        <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)]/60 p-12 text-center">
-          <Shield className="w-10 h-10 text-[var(--color-muted)]/30 mx-auto mb-3" />
-          <p className="text-[var(--color-muted)] text-sm max-w-md mx-auto">{t("policies.empty")}</p>
+        <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)]/60 p-16 text-center">
+          <div className="w-14 h-14 rounded-2xl bg-[var(--color-accent)]/4 border border-[var(--color-accent)]/8 flex items-center justify-center mx-auto mb-4">
+            <Shield className="w-7 h-7 text-[var(--color-accent)]/20" />
+          </div>
+          <p className="text-sm font-mono text-[var(--color-muted)] max-w-md mx-auto">{t("policies.empty")}</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -226,46 +251,62 @@ export default function PoliciesPage() {
             const display = isEditing && editData ? editData : policy;
 
             return (
-              <div key={policy.id} className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)]/80 backdrop-blur-sm overflow-hidden transition-all duration-200 hover:border-[var(--color-border-light)]">
+              <div
+                key={policy.id}
+                className={cn(
+                  "rounded-2xl overflow-hidden transition-all duration-300",
+                  "bg-[var(--color-card)]/90 backdrop-blur-sm",
+                  "border border-[var(--color-border)]",
+                  "card-glow shimmer-hover corner-accent",
+                  isExpanded && "border-[var(--color-border-light)]"
+                )}
+              >
                 {/* Header */}
                 <div
                   role="button"
                   tabIndex={0}
                   onClick={() => toggleExpand(policy.id)}
                   onKeyDown={(e) => { if (e.key === "Enter") toggleExpand(policy.id); }}
-                  className="w-full px-5 py-4 flex items-center gap-3 text-left cursor-pointer"
+                  className="w-full px-5 py-4 flex items-center gap-3.5 text-left cursor-pointer"
                 >
-                  <Shield className="w-4 h-4 text-[var(--color-accent)] shrink-0" />
+                  <div className="w-9 h-9 rounded-lg bg-[var(--color-accent)]/6 border border-[var(--color-accent)]/10 flex items-center justify-center shrink-0">
+                    <Shield className="w-4 h-4 text-[var(--color-accent)]" />
+                  </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2.5">
                       <span className="text-sm font-medium text-[var(--color-foreground)]">
                         {POLICY_TYPE_LABELS[policy.policyType]}
                       </span>
-                      <span className="text-[11px] text-[var(--color-muted)] font-mono">
+                      <span className="text-[10px] font-mono text-[var(--color-muted)] tracking-[0.12em] uppercase px-2 py-0.5 rounded-full bg-[var(--color-muted)]/6 border border-[var(--color-border)]/40">
                         {policy.rules.length} rule{policy.rules.length !== 1 ? "s" : ""}
                       </span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5">
                     <button
                       onClick={(e) => { e.stopPropagation(); startEdit(policy); setExpandedId(policy.id); }}
-                      className="text-[11px] text-[var(--color-muted)] hover:text-[var(--color-accent)] font-mono transition-colors px-2 py-1"
+                      className="text-[11px] font-mono text-[var(--color-muted)] hover:text-[var(--color-accent)] transition-colors px-2.5 py-1.5 rounded-md hover:bg-[var(--color-accent)]/6"
                     >
                       {t("policies.edit")}
                     </button>
                     <button
                       onClick={(e) => { e.stopPropagation(); deletePolicy(policy.id); }}
-                      className="text-[11px] text-[var(--color-muted)] hover:text-red-400 font-mono transition-colors px-2 py-1"
+                      className="text-[11px] font-mono text-[var(--color-muted)] hover:text-[var(--color-destructive)] transition-colors px-2 py-1.5 rounded-md hover:bg-[var(--color-destructive)]/6"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
-                    {isExpanded ? <ChevronDown className="w-4 h-4 text-[var(--color-muted)]" /> : <ChevronRight className="w-4 h-4 text-[var(--color-muted)]" />}
+                    <ChevronDown
+                      className={cn(
+                        "w-4 h-4 text-[var(--color-muted)] transition-transform duration-300",
+                        isExpanded ? "rotate-180" : "rotate-0"
+                      )}
+                    />
                   </div>
                 </div>
 
                 {/* Expanded rules */}
                 {isExpanded && (
-                  <div className="px-5 pb-5 border-t border-[var(--color-border)]/50 pt-4 space-y-3">
+                  <div className="px-5 pb-5 border-t border-[var(--color-border)]/40 pt-4 space-y-3">
                     {isEditing ? (
                       <>
                         {display.rules.map((rule, i) => (
@@ -289,21 +330,27 @@ export default function PoliciesPage() {
                             t={t}
                           />
                         ))}
-                        <div className="flex items-center justify-between pt-2 border-t border-[var(--color-border)]/50">
+                        <div className="flex items-center justify-between pt-3 border-t border-[var(--color-border)]/50">
                           <button
                             onClick={() => {
                               if (!editData) return;
                               setEditData({ ...editData, rules: [...editData.rules, emptyRule()] });
                             }}
-                            className="flex items-center gap-1.5 text-[12px] text-[var(--color-muted)] hover:text-[var(--color-foreground)] font-mono transition-colors"
+                            className="flex items-center gap-1.5 text-[12px] font-mono text-[var(--color-muted)] hover:text-[var(--color-accent)] transition-colors"
                           >
                             <Plus className="w-3.5 h-3.5" /> {t("policies.addRule")}
                           </button>
                           <div className="flex gap-2">
-                            <button onClick={cancelEdit} className="px-4 py-2 rounded-lg text-[12px] text-[var(--color-muted)] font-mono hover:text-[var(--color-foreground)] transition-colors">
+                            <button
+                              onClick={cancelEdit}
+                              className="px-4 py-2 rounded-lg text-[12px] font-mono text-[var(--color-muted)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-foreground)]/4 transition-all"
+                            >
                               Cancel
                             </button>
-                            <button onClick={saveEdit} className="px-5 py-2 rounded-lg bg-[var(--color-accent)]/15 text-[var(--color-accent)] text-[12px] font-medium border border-[var(--color-accent)]/20 hover:bg-[var(--color-accent)]/25 transition-colors">
+                            <button
+                              onClick={saveEdit}
+                              className="px-5 py-2 rounded-lg bg-[var(--color-accent)] text-[var(--color-background)] text-[12px] font-semibold hover:brightness-110 transition-all duration-200 shadow-[0_0_16px_-6px_var(--color-accent-glow)]"
+                            >
                               {t("policies.save")}
                             </button>
                           </div>
@@ -344,35 +391,43 @@ function RuleEditor({
   t: (key: TranslationKey) => string;
 }) {
   return (
-    <div className="rounded-xl border border-[var(--color-border)] bg-[#080c14]/60 p-4 space-y-3 relative">
+    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-background)]/70 p-5 space-y-4 relative">
       <div className="flex items-center justify-between">
-        <span className="text-[10px] font-semibold text-[var(--color-muted)] uppercase tracking-wider font-mono">
-          Rule {index + 1}
-        </span>
+        <div className="flex items-center gap-2.5">
+          <div className="w-5 h-5 rounded-full bg-[var(--color-accent)]/10 border border-[var(--color-accent)]/20 flex items-center justify-center">
+            <span className="text-[10px] font-mono font-bold text-[var(--color-accent)]">{index + 1}</span>
+          </div>
+          <span className="text-[10px] font-mono font-semibold text-[var(--color-muted)] tracking-[0.15em] uppercase">
+            Rule {index + 1}
+          </span>
+        </div>
         {total > 1 && (
-          <button onClick={onRemove} className="text-[11px] text-red-400/60 hover:text-red-400 font-mono transition-colors">
+          <button
+            onClick={onRemove}
+            className="text-[11px] font-mono text-[var(--color-destructive)]/60 hover:text-[var(--color-destructive)] transition-colors px-2 py-1 rounded hover:bg-[var(--color-destructive)]/6"
+          >
             {t("policies.removeRule")}
           </button>
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Condition */}
         <div className="md:col-span-2">
-          <label className="block text-[10px] font-semibold text-[var(--color-muted)] uppercase tracking-wider mb-1 font-mono">
+          <label className="block text-[10px] font-mono font-semibold text-[var(--color-muted)] tracking-[0.15em] uppercase mb-1.5">
             {t("policies.rule.condition")}
           </label>
           <input
             value={rule.condition}
             onChange={(e) => onChange("condition", e.target.value)}
             placeholder={t("policies.rule.conditionHelp")}
-            className="w-full rounded-lg border border-[var(--color-border)] bg-[#080c14] px-3 py-2 text-[13px] text-[var(--color-foreground)] font-mono focus:outline-none focus:border-[var(--color-accent)]/40 transition-colors placeholder:text-[var(--color-muted)]/50"
+            className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2 text-[13px] text-[var(--color-foreground)] font-mono focus:outline-none focus:border-[var(--color-accent)]/50 focus:ring-1 focus:ring-[var(--color-accent)]/20 transition-all placeholder:text-[var(--color-muted)]/40"
           />
         </div>
 
         {/* Approval type */}
         <div>
-          <label className="block text-[10px] font-semibold text-[var(--color-muted)] uppercase tracking-wider mb-1 font-mono">
+          <label className="block text-[10px] font-mono font-semibold text-[var(--color-muted)] tracking-[0.15em] uppercase mb-1.5">
             {t("policies.rule.approvalType")}
           </label>
           <select
@@ -382,7 +437,7 @@ function RuleEditor({
               onChange("approvalType", v);
               if (v === "auto") onChange("quorum", 0);
             }}
-            className="w-full rounded-lg border border-[var(--color-border)] bg-[#080c14] px-3 py-2 text-[13px] text-[var(--color-foreground)] font-mono focus:outline-none focus:border-[var(--color-accent)]/40"
+            className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2 text-[13px] text-[var(--color-foreground)] font-mono focus:outline-none focus:border-[var(--color-accent)]/50 focus:ring-1 focus:ring-[var(--color-accent)]/20 transition-all"
           >
             {APPROVAL_TYPE_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>{t(opt.labelKey)}</option>
@@ -392,7 +447,7 @@ function RuleEditor({
 
         {/* Quorum */}
         <div>
-          <label className="block text-[10px] font-semibold text-[var(--color-muted)] uppercase tracking-wider mb-1 font-mono">
+          <label className="block text-[10px] font-mono font-semibold text-[var(--color-muted)] tracking-[0.15em] uppercase mb-1.5">
             {t("policies.rule.quorum")}
           </label>
           <input
@@ -402,13 +457,13 @@ function RuleEditor({
             value={rule.quorum}
             disabled={rule.approvalType === "auto"}
             onChange={(e) => onChange("quorum", parseInt(e.target.value) || 0)}
-            className="w-full rounded-lg border border-[var(--color-border)] bg-[#080c14] px-3 py-2 text-[13px] text-[var(--color-foreground)] font-mono focus:outline-none focus:border-[var(--color-accent)]/40 disabled:opacity-30"
+            className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2 text-[13px] text-[var(--color-foreground)] font-mono focus:outline-none focus:border-[var(--color-accent)]/50 focus:ring-1 focus:ring-[var(--color-accent)]/20 transition-all disabled:opacity-25 disabled:cursor-not-allowed"
           />
         </div>
 
         {/* Eligible approvers */}
         <div>
-          <label className="block text-[10px] font-semibold text-[var(--color-muted)] uppercase tracking-wider mb-1 font-mono">
+          <label className="block text-[10px] font-mono font-semibold text-[var(--color-muted)] tracking-[0.15em] uppercase mb-1.5">
             {t("policies.rule.eligibleApprovers")}
           </label>
           <input
@@ -416,13 +471,13 @@ function RuleEditor({
             onChange={(e) => onChange("eligibleApprovers", e.target.value)}
             placeholder={t("policies.rule.eligibleHelp")}
             disabled={rule.approvalType === "auto"}
-            className="w-full rounded-lg border border-[var(--color-border)] bg-[#080c14] px-3 py-2 text-[13px] text-[var(--color-foreground)] font-mono focus:outline-none focus:border-[var(--color-accent)]/40 disabled:opacity-30 placeholder:text-[var(--color-muted)]/50"
+            className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2 text-[13px] text-[var(--color-foreground)] font-mono focus:outline-none focus:border-[var(--color-accent)]/50 focus:ring-1 focus:ring-[var(--color-accent)]/20 transition-all disabled:opacity-25 disabled:cursor-not-allowed placeholder:text-[var(--color-muted)]/40"
           />
         </div>
 
         {/* Required approvers */}
         <div>
-          <label className="block text-[10px] font-semibold text-[var(--color-muted)] uppercase tracking-wider mb-1 font-mono">
+          <label className="block text-[10px] font-mono font-semibold text-[var(--color-muted)] tracking-[0.15em] uppercase mb-1.5">
             {t("policies.rule.requiredApprovers")}
           </label>
           <input
@@ -430,7 +485,7 @@ function RuleEditor({
             onChange={(e) => onChange("requiredApprovers", e.target.value)}
             placeholder={t("policies.rule.requiredHelp")}
             disabled={rule.approvalType === "auto"}
-            className="w-full rounded-lg border border-[var(--color-border)] bg-[#080c14] px-3 py-2 text-[13px] text-[var(--color-foreground)] font-mono focus:outline-none focus:border-[var(--color-accent)]/40 disabled:opacity-30 placeholder:text-[var(--color-muted)]/50"
+            className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2 text-[13px] text-[var(--color-foreground)] font-mono focus:outline-none focus:border-[var(--color-accent)]/50 focus:ring-1 focus:ring-[var(--color-accent)]/20 transition-all disabled:opacity-25 disabled:cursor-not-allowed placeholder:text-[var(--color-muted)]/40"
           />
         </div>
       </div>
@@ -450,27 +505,46 @@ function RuleReadonly({
 }) {
   const approvalLabel = t(`policies.rule.${rule.approvalType}` as TranslationKey);
 
+  const approvalColor =
+    rule.approvalType === "auto"
+      ? "text-[var(--color-success)] bg-[var(--color-success)]/8 border-[var(--color-success)]/15"
+      : rule.approvalType === "single"
+      ? "text-[var(--color-accent)] bg-[var(--color-accent)]/8 border-[var(--color-accent)]/15"
+      : "text-[var(--color-accent-blue)] bg-[var(--color-accent-blue)]/8 border-[var(--color-accent-blue)]/15";
+
   return (
-    <div className="flex items-start gap-3 px-4 py-3 rounded-lg bg-[var(--color-background)]/50 border border-[var(--color-border)]/50">
-      <div className="w-5 h-5 rounded-full bg-[var(--color-accent)]/10 border border-[var(--color-accent)]/20 flex items-center justify-center shrink-0 mt-0.5">
+    <div className="flex items-start gap-3.5 px-4 py-3.5 rounded-xl bg-[var(--color-background)]/60 border border-[var(--color-border)]/40 hover:border-[var(--color-border)]/70 transition-colors">
+      {/* Numbered indicator */}
+      <div className="w-6 h-6 rounded-full bg-[var(--color-accent)]/8 border border-[var(--color-accent)]/18 flex items-center justify-center shrink-0 mt-0.5">
         <span className="text-[10px] font-mono font-bold text-[var(--color-accent)]">{index + 1}</span>
       </div>
-      <div className="flex-1 min-w-0 grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-1">
+
+      <div className="flex-1 min-w-0 grid grid-cols-2 md:grid-cols-4 gap-x-5 gap-y-1.5">
         <div>
-          <span className="text-[9px] text-[var(--color-muted)] uppercase tracking-wider font-mono">Condition</span>
-          <p className="text-[12px] font-mono text-[var(--color-foreground)] truncate">{rule.condition}</p>
+          <span className="text-[9px] font-mono font-semibold text-[var(--color-muted)] tracking-[0.15em] uppercase">
+            Condition
+          </span>
+          <p className="text-[12px] font-mono text-[var(--color-foreground)] truncate mt-0.5">{rule.condition}</p>
         </div>
         <div>
-          <span className="text-[9px] text-[var(--color-muted)] uppercase tracking-wider font-mono">Type</span>
-          <p className="text-[12px] font-mono text-[var(--color-foreground)]">{approvalLabel}</p>
+          <span className="text-[9px] font-mono font-semibold text-[var(--color-muted)] tracking-[0.15em] uppercase">
+            Type
+          </span>
+          <p className={cn("text-[11px] font-mono font-medium mt-0.5 inline-block px-2 py-0.5 rounded-full border", approvalColor)}>
+            {approvalLabel}
+          </p>
         </div>
         <div>
-          <span className="text-[9px] text-[var(--color-muted)] uppercase tracking-wider font-mono">Quorum</span>
-          <p className="text-[12px] font-mono text-[var(--color-foreground)]">{rule.quorum}</p>
+          <span className="text-[9px] font-mono font-semibold text-[var(--color-muted)] tracking-[0.15em] uppercase">
+            Quorum
+          </span>
+          <p className="text-[12px] font-mono text-[var(--color-foreground)] mt-0.5">{rule.quorum}</p>
         </div>
         <div>
-          <span className="text-[9px] text-[var(--color-muted)] uppercase tracking-wider font-mono">Approvers</span>
-          <p className="text-[12px] font-mono text-[var(--color-foreground)] truncate">
+          <span className="text-[9px] font-mono font-semibold text-[var(--color-muted)] tracking-[0.15em] uppercase">
+            Approvers
+          </span>
+          <p className="text-[12px] font-mono text-[var(--color-foreground)] truncate mt-0.5">
             {rule.approvalType === "auto" ? "—" : rule.eligibleApprovers.join(", ") || "—"}
           </p>
         </div>

@@ -7,10 +7,10 @@ const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLI
       <input
         type={type}
         className={cn(
-          "flex h-10 w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] px-3.5 py-2 font-mono text-sm text-[var(--color-foreground)] placeholder:text-[var(--color-muted)]/60 transition-colors duration-200",
+          "flex h-10 w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] px-3.5 py-2 font-mono text-sm text-[var(--color-foreground)] placeholder:text-[var(--color-muted)]/50 transition-all duration-200",
           "hover:border-[var(--color-border-light)]",
-          "focus:border-[var(--color-accent)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]/20",
-          "disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-[var(--color-border)]",
+          "focus:border-[var(--color-accent)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]/15",
+          "disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:border-[var(--color-border)]",
           "file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-[var(--color-foreground)]",
           className
         )}
