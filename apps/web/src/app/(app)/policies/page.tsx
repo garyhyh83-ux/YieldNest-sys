@@ -163,7 +163,7 @@ export default function PoliciesPage() {
         </div>
         <button
           onClick={() => setShowCreate(true)}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[var(--color-accent)] text-[var(--color-background)] text-[13px] font-semibold hover:brightness-110 transition-all duration-200 shadow-[0_0_20px_-6px_var(--color-accent-glow)]"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[var(--color-accent)] text-[var(--color-background)] text-[13px] font-semibold hover:brightness-110 transition-all duration-200 shadow-[var(--shadow-gold)]"
         >
           <Plus className="w-4 h-4" />
           {t("policies.create")}
@@ -172,14 +172,14 @@ export default function PoliciesPage() {
 
       {/* ── Demo Notice ── */}
       {isDemo && (
-        <div className="px-4 py-2.5 rounded-lg bg-[var(--color-accent)]/4 border border-[var(--color-accent)]/12 text-[11px] font-mono text-[var(--color-muted-light)] tracking-wide">
+        <div className="px-4 py-2.5 rounded-lg bg-[var(--color-accent)]/4 border border-[var(--color-accent)]/12 text-[11px] font-mono text-[var(--color-muted)] tracking-wide">
           {t("policies.demo")}
         </div>
       )}
 
       {/* ── Create Form ── */}
       {showCreate && (
-        <div className="rounded-2xl border border-[var(--color-accent)]/25 bg-[var(--color-card)]/95 backdrop-blur-sm p-6 space-y-5 shadow-[0_0_32px_-12px_var(--color-accent-glow)]">
+        <div className="rounded-2xl border border-[var(--color-accent)]/25 bg-[var(--color-card)] p-6 space-y-5 shadow-[var(--shadow-gold)]">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-[var(--color-accent)]/8 border border-[var(--color-accent)]/15 flex items-center justify-center">
               <Shield className="w-5 h-5 text-[var(--color-accent)]" />
@@ -226,7 +226,7 @@ export default function PoliciesPage() {
               </button>
               <button
                 onClick={submitCreate}
-                className="px-5 py-2 rounded-lg bg-[var(--color-accent)] text-[var(--color-background)] text-[12px] font-semibold hover:brightness-110 transition-all duration-200 shadow-[0_0_16px_-6px_var(--color-accent-glow)]"
+                className="px-5 py-2 rounded-lg bg-[var(--color-accent)] text-[var(--color-background)] text-[12px] font-semibold hover:brightness-110 transition-all duration-200 shadow-[var(--shadow-gold)]"
               >
                 {t("policies.save")}
               </button>
@@ -237,7 +237,7 @@ export default function PoliciesPage() {
 
       {/* ── Policy List ── */}
       {policies.length === 0 ? (
-        <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)]/60 p-16 text-center">
+        <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] card-glow p-16 text-center">
           <div className="w-14 h-14 rounded-2xl bg-[var(--color-accent)]/4 border border-[var(--color-accent)]/8 flex items-center justify-center mx-auto mb-4">
             <Shield className="w-7 h-7 text-[var(--color-accent)]/20" />
           </div>
@@ -255,10 +255,10 @@ export default function PoliciesPage() {
                 key={policy.id}
                 className={cn(
                   "rounded-2xl overflow-hidden transition-all duration-300",
-                  "bg-[var(--color-card)]/90 backdrop-blur-sm",
+                  "bg-[var(--color-card)]",
                   "border border-[var(--color-border)]",
                   "card-glow shimmer-hover corner-accent",
-                  isExpanded && "border-[var(--color-border-light)]"
+                  isExpanded && "border-[var(--color-border)]"
                 )}
               >
                 {/* Header */}
@@ -349,7 +349,7 @@ export default function PoliciesPage() {
                             </button>
                             <button
                               onClick={saveEdit}
-                              className="px-5 py-2 rounded-lg bg-[var(--color-accent)] text-[var(--color-background)] text-[12px] font-semibold hover:brightness-110 transition-all duration-200 shadow-[0_0_16px_-6px_var(--color-accent-glow)]"
+                              className="px-5 py-2 rounded-lg bg-[var(--color-accent)] text-[var(--color-background)] text-[12px] font-semibold hover:brightness-110 transition-all duration-200 shadow-[var(--shadow-gold)]"
                             >
                               {t("policies.save")}
                             </button>
@@ -510,7 +510,7 @@ function RuleReadonly({
       ? "text-[var(--color-success)] bg-[var(--color-success)]/8 border-[var(--color-success)]/15"
       : rule.approvalType === "single"
       ? "text-[var(--color-accent)] bg-[var(--color-accent)]/8 border-[var(--color-accent)]/15"
-      : "text-[var(--color-accent-blue)] bg-[var(--color-accent-blue)]/8 border-[var(--color-accent-blue)]/15";
+      : "text-[var(--color-primary)] bg-[var(--color-primary)]/8 border-[var(--color-primary)]/15";
 
   return (
     <div className="flex items-start gap-3.5 px-4 py-3.5 rounded-xl bg-[var(--color-background)]/60 border border-[var(--color-border)]/40 hover:border-[var(--color-border)]/70 transition-colors">

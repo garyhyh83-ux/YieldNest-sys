@@ -101,7 +101,7 @@ export default function DashboardPage() {
           label={t("dashboard.totalAssets")}
           value={`$${tv.toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
           icon={DollarSign}
-          accent="amber"
+          accent="gold"
         />
         <StatCard
           label={t("dashboard.yesterdayYield")}
@@ -121,19 +121,19 @@ export default function DashboardPage() {
           label={t("dashboard.currentApy")}
           value="4.50%"
           icon={Percent}
-          accent="amber"
+          accent="gold"
         />
       </div>
 
       {/* ── Charts + Allocation ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Yield Trend */}
-        <Card>
+        <Card className="card-glow">
           <CardHeader>
             <CardTitle>{t("dashboard.yieldTrend")}</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-52 flex items-center justify-center rounded-xl bg-[var(--color-background)]/60 border border-[var(--color-border)]/30">
+            <div className="h-52 flex items-center justify-center rounded-xl bg-[var(--color-elevated)] border border-[var(--color-border)]/30">
               <div className="text-center space-y-3">
                 <div className="w-16 h-16 rounded-full bg-[var(--color-accent)]/4 border border-[var(--color-accent)]/10 flex items-center justify-center mx-auto">
                   <Activity className="w-6 h-6 text-[var(--color-accent)]/25" />
@@ -147,7 +147,7 @@ export default function DashboardPage() {
         </Card>
 
         {/* Allocation */}
-        <Card>
+        <Card className="card-glow">
           <CardHeader>
             <CardTitle>{t("dashboard.assetAllocation")}</CardTitle>
           </CardHeader>
@@ -187,7 +187,7 @@ export default function DashboardPage() {
       </div>
 
       {/* ── Position / Activity ── */}
-      <Card>
+      <Card className="card-glow">
         <CardHeader>
           <CardTitle>{t("dashboard.recentActivity")}</CardTitle>
         </CardHeader>
@@ -223,7 +223,7 @@ export default function DashboardPage() {
             </div>
           ) : (
             <div className="py-10 text-center">
-              <div className="w-12 h-12 rounded-full bg-[var(--color-foreground)]/3 flex items-center justify-center mx-auto mb-3">
+              <div className="w-12 h-12 rounded-full bg-[var(--color-elevated)] flex items-center justify-center mx-auto mb-3">
                 <Activity className="w-5 h-5 text-[var(--color-muted)]/30" />
               </div>
               <p className="text-[11px] font-mono text-[var(--color-muted)]/50 tracking-wider">
@@ -248,21 +248,42 @@ function StatCard({
   label: string;
   value: string;
   icon: typeof DollarSign;
-  accent: "amber" | "blue" | "emerald";
+  accent: "gold" | "navy" | "blue" | "emerald";
   muted?: boolean;
 }) {
-  const colors = {
-    amber: { dot: "bg-[var(--color-accent)]", text: "text-[var(--color-accent)]", bg: "bg-[var(--color-accent)]/6", border: "border-[var(--color-accent)]/15" },
-    blue: { dot: "bg-[var(--color-accent-blue)]", text: "text-[var(--color-accent-blue)]", bg: "bg-[var(--color-accent-blue)]/6", border: "border-[var(--color-accent-blue)]/15" },
-    emerald: { dot: "bg-[var(--color-success)]", text: "text-[var(--color-success)]", bg: "bg-[var(--color-success)]/6", border: "border-[var(--color-success)]/15" },
+  const colors: Record<"gold" | "navy" | "blue" | "emerald", { dot: string; text: string; bg: string; border: string }> = {
+    gold: {
+      dot: "bg-[var(--color-accent)]",
+      text: "text-[var(--color-accent)]",
+      bg: "bg-[var(--color-accent)]/6",
+      border: "border-[var(--color-accent)]/15",
+    },
+    navy: {
+      dot: "bg-[var(--color-primary)]",
+      text: "text-[var(--color-primary)]",
+      bg: "bg-[var(--color-primary)]/6",
+      border: "border-[var(--color-primary)]/15",
+    },
+    blue: {
+      dot: "bg-[var(--color-accent-blue)]",
+      text: "text-[var(--color-accent-blue)]",
+      bg: "bg-[var(--color-accent-blue)]/6",
+      border: "border-[var(--color-accent-blue)]/15",
+    },
+    emerald: {
+      dot: "bg-[var(--color-success)]",
+      text: "text-[var(--color-success)]",
+      bg: "bg-[var(--color-success)]/6",
+      border: "border-[var(--color-success)]/15",
+    },
   };
 
   const c = colors[accent];
 
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden card-glow">
       {/* Colored accent line at top */}
-      <div className={cn("h-0.5", muted ? "bg-transparent" : c.dot)} />
+      <div className={cn("h-px", muted ? "bg-transparent" : c.dot)} />
       <CardContent className="p-5">
         <div className="flex items-start justify-between mb-3">
           <span

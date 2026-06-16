@@ -66,16 +66,16 @@ type Tab = "myRequests" | "pendingMyVote" | "all";
 
 const statusStyles: Record<string, { bg: string; text: string; border: string; dot: string }> = {
   pending: {
-    bg: "bg-[var(--color-warning)]/8",
-    text: "text-[var(--color-warning)]",
-    border: "border-[var(--color-warning)]/15",
-    dot: "bg-[var(--color-warning)]",
+    bg: "bg-[var(--color-accent)]/8",
+    text: "text-[var(--color-accent)]",
+    border: "border-[var(--color-accent)]/15",
+    dot: "bg-[var(--color-accent)]",
   },
   in_progress: {
-    bg: "bg-[var(--color-accent-blue)]/8",
-    text: "text-[var(--color-accent-blue)]",
-    border: "border-[var(--color-accent-blue)]/15",
-    dot: "bg-[var(--color-accent-blue)]",
+    bg: "bg-[var(--color-primary)]/8",
+    text: "text-[var(--color-primary)]",
+    border: "border-[var(--color-primary)]/15",
+    dot: "bg-[var(--color-primary)]",
   },
   approved: {
     bg: "bg-[var(--color-success)]/8",
@@ -97,9 +97,9 @@ const statusStyles: Record<string, { bg: string; text: string; border: string; d
   },
   expired: {
     bg: "bg-[var(--color-warning)]/6",
-    text: "text-[#c9892b]",
-    border: "border-[#c9892b]/12",
-    dot: "bg-[#c9892b]",
+    text: "text-[var(--color-warning)]",
+    border: "border-[var(--color-warning)]/12",
+    dot: "bg-[var(--color-warning)]",
   },
 };
 
@@ -163,7 +163,7 @@ export default function ApprovalsPage() {
             className={cn(
               "px-5 py-2.5 rounded-lg text-[13px] font-medium transition-all duration-200 font-mono tracking-wide",
               activeTab === tab
-                ? "bg-[var(--color-accent)]/12 text-[var(--color-accent)] shadow-[inset_0_1px_0_0_rgba(201,169,75,0.15)]"
+                ? "bg-[var(--color-primary)] text-white"
                 : "text-[var(--color-muted)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-foreground)]/3"
             )}
           >
@@ -175,7 +175,7 @@ export default function ApprovalsPage() {
       {/* ── Approval List ── */}
       <div className="space-y-3">
         {filtered.length === 0 ? (
-          <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)]/60 p-16 text-center">
+          <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] card-glow p-16 text-center">
             <div className="w-14 h-14 rounded-2xl bg-[var(--color-accent)]/5 border border-[var(--color-accent)]/8 flex items-center justify-center mx-auto mb-4">
               <FileText className="w-6 h-6 text-[var(--color-accent)]/25" />
             </div>
@@ -194,9 +194,9 @@ export default function ApprovalsPage() {
               <div
                 key={a.id}
                 className={cn(
-                  "rounded-2xl border bg-[var(--color-card)]/80 backdrop-blur-sm overflow-hidden transition-all duration-200 card-glow",
+                  "rounded-2xl border bg-[var(--color-card)] overflow-hidden transition-all duration-200 card-glow",
                   isExpanded
-                    ? "border-[var(--color-border-light)]"
+                    ? "border-[var(--color-border)]"
                     : "border-[var(--color-border)]"
                 )}
               >
@@ -229,7 +229,7 @@ export default function ApprovalsPage() {
                     </div>
                     <p className="text-[11px] text-[var(--color-muted)] mt-1.5 font-mono tracking-wide">
                       {t("approvals.quorum")}: {a.currentQuorum}/{a.requiredQuorum}
-                      <span className="text-[var(--color-border-light)] mx-2">|</span>
+                      <span className="text-[var(--color-border)] mx-2">|</span>
                       {a.id}
                     </p>
                   </div>
@@ -260,7 +260,7 @@ export default function ApprovalsPage() {
                       <h4 className="text-[10px] font-semibold text-[var(--color-muted)] uppercase tracking-[0.18em] mb-3 font-mono">
                         {t("approvals.detail.payload")}
                       </h4>
-                      <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-background)]/70 p-4 font-mono text-[13px] text-[var(--color-muted-light)] space-y-1.5">
+                      <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-background)]/70 p-4 font-mono text-[13px] text-[var(--color-muted)] space-y-1.5">
                         {Object.entries(a.payload).map(([key, val]) => (
                           <div key={key} className="flex gap-2">
                             <span className="text-[var(--color-accent)] shrink-0">{key}:</span>

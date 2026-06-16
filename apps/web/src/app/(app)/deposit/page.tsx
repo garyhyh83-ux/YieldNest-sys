@@ -87,7 +87,7 @@ export default function DepositPage() {
     return (
       <div className="space-y-8">
         <div>
-          <h1 className="font-display text-[28px] font-bold text-[var(--color-text)]">
+          <h1 className="font-display text-[28px] font-bold text-[var(--color-foreground)]">
             {t("deposit.title")}
           </h1>
           <div className="accent-rule my-3" />
@@ -122,7 +122,7 @@ export default function DepositPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="font-display text-[28px] font-bold text-[var(--color-text)]">
+        <h1 className="font-display text-[28px] font-bold text-[var(--color-foreground)]">
           {t("deposit.title")}
         </h1>
         <div className="accent-rule my-3" />
@@ -166,7 +166,7 @@ export default function DepositPage() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between text-sm p-3 rounded-lg bg-[var(--color-accent)]/4 border border-[var(--color-accent)]/10">
+              <div className="flex items-center justify-between text-sm p-3 rounded-lg bg-[var(--color-elevated)]">
                 <span className="text-[var(--color-muted)]">
                   {t("deposit.walletBalance")}
                 </span>
@@ -177,7 +177,7 @@ export default function DepositPage() {
 
               <Button
                 className="w-full"
-                variant="default"
+                variant="gold"
                 size="lg"
                 onClick={handleDeposit}
                 disabled={

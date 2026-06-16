@@ -51,12 +51,12 @@ function StrategyCard({ id }: { id: number }) {
   };
 
   return (
-    <Card className="corner-accent overflow-hidden">
-      {/* Status accent strip at top */}
+    <Card className="card-glow corner-accent overflow-hidden">
+      {/* Status accent stripe at top */}
       <div
         className={cn(
           "h-0.5",
-          isActive ? "bg-[var(--color-success)]" : "bg-[var(--color-border)]"
+          isActive ? "bg-emerald-500" : "bg-[var(--color-muted)]"
         )}
       />
 
@@ -69,7 +69,7 @@ function StrategyCard({ id }: { id: number }) {
             className={cn(
               "px-2.5 py-0.5 rounded-full text-[10px] font-mono uppercase tracking-[0.12em] border",
               isActive
-                ? "bg-[var(--color-success)]/8 text-[var(--color-success)] border-[var(--color-success)]/20"
+                ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
                 : "bg-[var(--color-muted)]/6 text-[var(--color-muted)] border-[var(--color-border)]/50"
             )}
           >
@@ -115,9 +115,9 @@ function StrategyCard({ id }: { id: number }) {
           />
         </div>
 
-        {/* Claim yield button — vault architectural style */}
+        {/* Claim yield button — gold CTA */}
         <Button
-          variant="vault"
+          variant="gold"
           size="sm"
           className="w-full"
           onClick={handleClaimYield}
@@ -167,7 +167,7 @@ export default function StrategiesPage() {
               {t("strategies.connectWallet")}
             </p>
             {connectors.length > 0 && connectors[0] && (
-              <Button onClick={() => connect({ connector: connectors[0]! })}>
+              <Button variant="default" onClick={() => connect({ connector: connectors[0]! })}>
                 {t("strategies.connectWallet")}
               </Button>
             )}
@@ -195,9 +195,9 @@ export default function StrategiesPage() {
         </div>
 
         {/* Connection badge */}
-        <div className="flex items-center gap-2.5 px-4 py-2 rounded-lg bg-[var(--color-success)]/8 border border-[var(--color-success)]/15 backdrop-blur-sm">
+        <div className="flex items-center gap-2.5 px-4 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/15 backdrop-blur-sm">
           <span className="live-dot !m-0" />
-          <span className="text-[11px] font-mono text-[var(--color-success)] font-medium tracking-[0.15em] uppercase">
+          <span className="text-[11px] font-mono text-emerald-600 font-medium tracking-[0.15em] uppercase">
             Connected
           </span>
         </div>
@@ -222,7 +222,7 @@ export default function StrategiesPage() {
       )}
 
       {/* ── Yield Summary ── */}
-      <Card className="corner-accent">
+      <Card className="card-glow corner-accent">
         <CardHeader>
           <CardTitle className="text-[var(--color-foreground)] text-xs font-semibold">
             {t("strategies.yieldSummary")}

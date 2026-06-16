@@ -1,6 +1,7 @@
 "use client";
 
 import { useLocale } from "@/providers/locale-provider";
+import { cn } from "@/lib/utils";
 import type { TranslationKey } from "@/lib/i18n/translations";
 import { FileBarChart, Download, FileText, ShieldCheck } from "lucide-react";
 
@@ -23,7 +24,7 @@ export default function ReportsPage() {
       </div>
 
       {/* ── Placeholder card ── */}
-      <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)]/80 backdrop-blur-sm card-glow p-16 text-center corner-accent">
+      <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] card-glow p-16 text-center corner-accent">
         {/* Icon cluster */}
         <div className="flex items-center justify-center gap-3 mb-8">
           <div className="w-14 h-14 rounded-2xl bg-[var(--color-accent)]/5 border border-[var(--color-accent)]/8 flex items-center justify-center relative overflow-hidden">
@@ -31,8 +32,8 @@ export default function ReportsPage() {
             <FileBarChart className="w-6 h-6 text-[var(--color-accent)]/50 relative" />
           </div>
           <div className="w-0.5 h-8 rounded-full bg-[var(--color-border)]" />
-          <div className="w-12 h-12 rounded-xl bg-[var(--color-accent-blue)]/5 border border-[var(--color-accent-blue)]/8 flex items-center justify-center">
-            <FileText className="w-5 h-5 text-[var(--color-accent-blue)]/40" />
+          <div className="w-12 h-12 rounded-xl bg-[var(--color-primary)]/5 border border-[var(--color-primary)]/8 flex items-center justify-center">
+            <FileText className="w-5 h-5 text-[var(--color-primary)]/40" />
           </div>
           <div className="w-0.5 h-8 rounded-full bg-[var(--color-border)]" />
           <div className="w-14 h-14 rounded-2xl bg-[var(--color-success)]/5 border border-[var(--color-success)]/8 flex items-center justify-center">
@@ -59,7 +60,7 @@ export default function ReportsPage() {
             </p>
           </div>
           <div className="rounded-xl border border-[var(--color-border)]/50 bg-[var(--color-background)]/40 p-4 text-center">
-            <FileText className="w-5 h-5 text-[var(--color-accent-blue)]/40 mx-auto mb-2" />
+            <FileText className="w-5 h-5 text-[var(--color-primary)]/40 mx-auto mb-2" />
             <p className="text-[10px] font-mono text-[var(--color-muted)] tracking-[0.15em] uppercase">
               Audit Log Queries
             </p>

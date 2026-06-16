@@ -74,7 +74,7 @@ export default function WithdrawPage() {
     return (
       <div className="space-y-8">
         <div>
-          <h1 className="font-display text-[28px] font-bold text-[var(--color-text)]">
+          <h1 className="font-display text-[28px] font-bold text-[var(--color-foreground)]">
             {t("withdraw.title")}
           </h1>
           <div className="accent-rule my-3" />
@@ -109,7 +109,7 @@ export default function WithdrawPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="font-display text-[28px] font-bold text-[var(--color-text)]">
+        <h1 className="font-display text-[28px] font-bold text-[var(--color-foreground)]">
           {t("withdraw.title")}
         </h1>
         <div className="accent-rule my-3" />
@@ -169,7 +169,7 @@ export default function WithdrawPage() {
 
               <Button
                 className="w-full"
-                variant="default"
+                variant="gold"
                 size="lg"
                 onClick={handleWithdraw}
                 disabled={

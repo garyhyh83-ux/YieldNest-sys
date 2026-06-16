@@ -1,31 +1,50 @@
 @import "tailwindcss";
 
 /* ── YieldNest Treasury Terminal ──
-   Aesthetic: "Gilded Concrete" — Swiss vault meets brutalist architecture.
-   Warm charcoal, burnished gold, emerald growth, architectural precision.
-   Raw materials elevated to luxury through craft and restraint.
+   Design System: Institutional DeFi — Light theme with deep navy primary,
+   warm gold accents, gold glow shadows, and clean white cards.
+   Inspired by institutional-grade DeFi platforms.
 */
 
 @theme {
-  --color-background: #191915;
-  --color-card: #21211d;
-  --color-elevated: #282824;
-  --color-border: #33332e;
-  --color-border-light: #40403a;
-  --color-foreground: #efece4;
-  --color-muted: #848378;
-  --color-muted-light: #a3a296;
-  --color-accent: #c9a94b;
-  --color-accent-emerald: #c9a94b;
-  --color-accent-glow: rgba(201, 169, 75, 0.18);
-  --color-accent-blue: #5b8dee;
-  --color-success: #3d8b5f;
+  /* ── Base ── */
+  --color-background: #f7f7f2;
+  --color-card: #ffffff;
+  --color-elevated: #f2f2eb;
+  --color-border: #e2e1d8;
+  --color-border-light: #ededd8;
+  --color-foreground: #1a1a16;
+  --color-muted: #8a887e;
+  --color-muted-light: #6b6960;
+
+  /* ── Primary: Deep Navy ── */
+  --color-primary: #0a2845;
+  --color-primary-hover: #0d3356;
+  --color-primary-foreground: #ffffff;
+
+  /* ── Accent: Warm Gold ── */
+  --color-accent: #c9a44b;
+  --color-accent-emerald: #c9a44b;
+  --color-accent-glow: rgba(201, 164, 75, 0.30);
+  --color-accent-foreground: #1a1a16;
+
+  /* ── Semantic ── */
+  --color-accent-blue: #3b6fb6;
+  --color-success: #2d8b5f;
   --color-warning: #c9892b;
   --color-destructive: #c4553d;
-  --color-chart-1: #c9a94b;
-  --color-chart-2: #5b8dee;
-  --color-chart-3: #3d8b5f;
+
+  /* ── Chart ── */
+  --color-chart-1: #c9a44b;
+  --color-chart-2: #3b6fb6;
+  --color-chart-3: #2d8b5f;
   --color-chart-4: #c4553d;
+
+  /* ── Shadows ── */
+  --shadow-gold: 0 2px 16px 0 rgba(201, 164, 75, 0.45);
+  --shadow-soft: 0px 4px 6px 0px rgba(11, 33, 64, 0.06);
+  --shadow-card: 0px 2px 8px 0px rgba(0, 0, 0, 0.04);
+  --shadow-nav: -3px 3px 0px 0px #0a2845;
 }
 
 /* ── Base ── */
@@ -43,23 +62,12 @@ html {
 body {
   background-color: var(--color-background);
   background-image:
-    /* Warm gold atmospheric wash at top edge */
-    radial-gradient(ellipse 90% 55% at 50% -8%, color-mix(in srgb, var(--color-accent) 5%, transparent), transparent 70%),
-    /* Architectural drafting grid — thick structural lines */
-    linear-gradient(to right, color-mix(in srgb, var(--color-border) 14%, transparent) 1px, transparent 1px),
-    /* Fine subdivision lines */
-    linear-gradient(to right, color-mix(in srgb, var(--color-border) 5%, transparent) 0.5px, transparent 0.5px),
-    /* Horizontal structural */
-    linear-gradient(to bottom, color-mix(in srgb, var(--color-border) 14%, transparent) 1px, transparent 1px),
-    /* Horizontal fine */
-    linear-gradient(to bottom, color-mix(in srgb, var(--color-border) 5%, transparent) 0.5px, transparent 0.5px);
-  background-size:
-    100% 100%,
-    96px 100%,
-    16px 100%,
-    100% 96px,
-    100% 16px;
-  background-position: 0 0, -1px 0, -1px 0, 0 -1px, 0 -1px;
+    /* Subtle warm gold atmospheric wash at top */
+    radial-gradient(ellipse 80% 50% at 50% -5%, color-mix(in srgb, var(--color-accent) 10%, transparent), transparent 70%),
+    /* Very subtle navy glow at bottom-right */
+    radial-gradient(ellipse 40% 30% at 90% 100%, color-mix(in srgb, var(--color-primary) 6%, transparent), transparent 70%);
+  background-size: 100% 100%;
+  background-position: 0 0;
 }
 
 /* ── Scrollbar ── */
@@ -80,13 +88,13 @@ body {
 
 /* ── Selection ── */
 ::selection {
-  background: color-mix(in srgb, var(--color-accent) 28%, transparent);
-  color: var(--color-foreground);
+  background: color-mix(in srgb, var(--color-accent) 30%, transparent);
+  color: var(--color-accent-foreground);
 }
 
 /* ── Focus rings ── */
 *:focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -120,7 +128,7 @@ body {
   background: linear-gradient(
     105deg,
     transparent 0%,
-    color-mix(in srgb, var(--color-accent) 6%, transparent) 40%,
+    color-mix(in srgb, var(--color-accent) 8%, transparent) 40%,
     transparent 75%
   );
   background-size: 200% 100%;
@@ -146,7 +154,7 @@ body {
   background: var(--color-success);
   margin-right: 7px;
   animation: live-blink 1.8s ease-in-out infinite;
-  box-shadow: 0 0 6px color-mix(in srgb, var(--color-success) 60%, transparent);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--color-success) 50%, transparent);
 }
 
 /* ── Staggered entry ── */
@@ -170,66 +178,42 @@ body {
 .stagger-in > *:nth-child(11) { animation-delay: 700ms; }
 .stagger-in > *:nth-child(12) { animation-delay: 770ms; }
 
-/* ── Number ticker (for value changes) ── */
-@keyframes number-tick {
-  0% { transform: translateY(0); }
-  20% { transform: translateY(-2px); }
-  100% { transform: translateY(0); }
-}
-.animate-tick {
-  animation: number-tick 0.3s ease-out;
-}
-
 /* ═══════════════════════════════════════════════════════════════
    CARD EFFECTS
    ═══════════════════════════════════════════════════════════════ */
 
-/* Standard card glow on hover */
+/* Standard card */
 .card-glow {
   border: 1px solid var(--color-border);
-  transition: border-color 0.35s ease, box-shadow 0.35s ease, background-color 0.35s ease;
+  box-shadow: var(--shadow-card);
+  transition: border-color 0.35s ease, box-shadow 0.35s ease, transform 0.35s ease;
 }
 .card-glow:hover {
-  border-color: color-mix(in srgb, var(--color-accent) 25%, var(--color-border));
-  box-shadow: 0 0 24px -8px var(--color-accent-glow);
+  border-color: color-mix(in srgb, var(--color-accent) 30%, var(--color-border));
+  box-shadow: var(--shadow-gold);
+  transform: translateY(-1px);
 }
 
-/* Architectural card — double-line border like a blueprint detail */
-.card-arch {
-  border: 1px solid var(--color-border);
-  outline: 1px solid color-mix(in srgb, var(--color-border) 30%, transparent);
-  outline-offset: 3px;
-  transition: border-color 0.35s ease, outline-color 0.35s ease;
+/* Gold-accented card */
+.card-gold {
+  border: 1px solid color-mix(in srgb, var(--color-accent) 20%, var(--color-border));
+  box-shadow: var(--shadow-soft);
+  transition: border-color 0.35s ease, box-shadow 0.35s ease;
 }
-.card-arch:hover {
-  border-color: color-mix(in srgb, var(--color-accent) 20%, var(--color-border));
-  outline-color: color-mix(in srgb, var(--color-accent) 10%, transparent);
-}
-
-/* Glass vault card */
-.card-vault {
-  background: color-mix(in srgb, var(--color-card) 75%, transparent);
-  backdrop-filter: blur(20px);
-  border: 1px solid color-mix(in srgb, var(--color-border) 70%, transparent);
-  box-shadow:
-    0 4px 24px -12px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 color-mix(in srgb, var(--color-foreground) 3%, transparent);
+.card-gold:hover {
+  border-color: color-mix(in srgb, var(--color-accent) 50%, var(--color-border));
+  box-shadow: var(--shadow-gold);
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   DECORATIVE ELEMENTS
-   ═══════════════════════════════════════════════════════════════ */
-
-/* Gold accent line — architectural detail */
-.accent-rule {
-  width: 40px;
-  height: 2px;
-  background: var(--color-accent);
-  border-radius: 1px;
-  opacity: 0.7;
+/* Navy accent card */
+.card-navy {
+  background: var(--color-primary);
+  color: var(--color-primary-foreground);
+  border: 1px solid var(--color-primary);
+  box-shadow: var(--shadow-soft);
 }
 
-/* Gold corner accent for cards */
+/* Gold corner accent */
 .corner-accent {
   position: relative;
 }
@@ -240,8 +224,35 @@ body {
   left: -1px;
   width: 28px;
   height: 28px;
-  border-top: 2px solid color-mix(in srgb, var(--color-accent) 40%, transparent);
-  border-left: 2px solid color-mix(in srgb, var(--color-accent) 40%, transparent);
+  border-top: 2px solid color-mix(in srgb, var(--color-accent) 50%, transparent);
+  border-left: 2px solid color-mix(in srgb, var(--color-accent) 50%, transparent);
   border-radius: 8px 0 0 0;
   pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DECORATIVE ELEMENTS
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Gold accent line */
+.accent-rule {
+  width: 40px;
+  height: 2px;
+  background: var(--color-accent);
+  border-radius: 1px;
+  opacity: 0.8;
+}
+
+/* Navy accent line */
+.navy-rule {
+  width: 40px;
+  height: 2px;
+  background: var(--color-primary);
+  border-radius: 1px;
+  opacity: 0.6;
+}
+
+/* Tooltip-style hard shadow (for hover cards, popovers) */
+.shadow-tooltip {
+  box-shadow: -3px 3px 0px 0px var(--color-primary);
 }

@@ -29,16 +29,16 @@ export function ChainSwitcher() {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  if (!mounted) return <div className="w-36 h-7 rounded-md bg-[var(--color-foreground)]/3 animate-data-pulse" />;
+  if (!mounted) return <div className="w-36 h-7 rounded-md bg-[var(--color-elevated)] animate-data-pulse" />;
 
   return (
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--color-background)] border border-[var(--color-border)] text-[11px] font-mono text-[var(--color-muted-light)] hover:border-[var(--color-accent)]/25 hover:text-[var(--color-foreground)] transition-all duration-200"
+        className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--color-card)] border border-[var(--color-border)] text-[11px] font-mono text-[var(--color-muted)] hover:border-[var(--color-accent)]/25 hover:text-[var(--color-foreground)] transition-all duration-200"
       >
         <span
-          className="w-2 h-2 rounded-full shrink-0 ring-1 ring-offset-1 ring-offset-[var(--color-background)]"
+          className="w-2 h-2 rounded-full shrink-0 ring-1 ring-offset-1 ring-offset-[var(--color-card)]"
           style={{ backgroundColor: current.color, boxShadow: `0 0 6px ${current.color}40` }}
         />
         <span className="tracking-wide">{current.name}</span>
@@ -46,7 +46,7 @@ export function ChainSwitcher() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-1.5 w-48 py-1 rounded-xl bg-[var(--color-card)] border border-[var(--color-border)] shadow-2xl shadow-black/30 backdrop-blur-xl z-50 overflow-hidden">
+        <div className="absolute right-0 top-full mt-1.5 w-48 py-1 rounded-xl bg-[var(--color-card)] border border-[var(--color-border)] shadow-[var(--shadow-soft)] backdrop-blur-xl z-50 overflow-hidden">
           {CHAINS.map((chain) => (
             <button
               key={chain.id}
@@ -57,7 +57,7 @@ export function ChainSwitcher() {
               className={cn(
                 "w-full flex items-center gap-2.5 px-3.5 py-2.5 text-[12px] font-mono transition-colors",
                 chain.id === chainId
-                  ? "bg-[var(--color-accent)]/8 text-[var(--color-accent)] border-l-[3px] border-l-[var(--color-accent)]"
+                  ? "bg-[var(--color-primary)]/8 text-[var(--color-primary)] border-l-[3px] border-l-[var(--color-primary)]"
                   : "text-[var(--color-muted)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-foreground)]/3 border-l-[3px] border-l-transparent"
               )}
             >
@@ -67,7 +67,7 @@ export function ChainSwitcher() {
               />
               {chain.name}
               {chain.id === chainId && (
-                <span className="ml-auto text-[10px] text-[var(--color-accent)]/70 font-medium tracking-wider">
+                <span className="ml-auto text-[10px] text-[var(--color-primary)]/70 font-medium tracking-wider">
                   Active
                 </span>
               )}
