@@ -242,6 +242,7 @@ export const en = {
 export const zh = {
   // ─── Layout ───
   "app.title": "YieldNest",
+  "app.chineseName": "金瓯",
   "app.version": "v0.2.0 — Phase 2",
   "demo.badge": "演示模式",
 
