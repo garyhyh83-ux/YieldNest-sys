@@ -48,8 +48,8 @@ export const wagmiConfig = createConfig({
   ssr: true,
   storage: createStorage({ storage: cookieStorage }),
   transports: {
-    [anvilBaseSepolia.id]: http(),
-    [arbitrumSepolia.id]: http(),
-    [ethereumSepolia.id]: http(),
+    [anvilBaseSepolia.id]: http("http://localhost:8545", { timeout: 5_000 }),
+    [arbitrumSepolia.id]: http(undefined, { timeout: 10_000 }),
+    [ethereumSepolia.id]: http(undefined, { timeout: 10_000 }),
   },
 });

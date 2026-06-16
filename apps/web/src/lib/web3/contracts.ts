@@ -136,87 +136,165 @@ const ERC20ABI = [
 
 // ── Hook: USDC Balance ──
 export function useUsdcBalance(address?: `0x${string}`) {
+  const { isConnected } = useAccount();
   const addrs = useContractAddresses();
   return useReadContract({
     abi: ERC20ABI, address: addrs.usdc, functionName: "balanceOf",
     args: address ? [address] : undefined,
-    query: { enabled: !!address, refetchInterval: 15_000 },
+    query: {
+      enabled: isConnected && !!address,
+      staleTime: 30_000,
+      refetchInterval: 30_000,
+    },
   });
 }
 
 // ── Hook: USDC Approval ──
 export function useUsdcApprove(spender: `0x${string}`, amount: bigint) {
+  const { isConnected } = useAccount();
+  const addrs = useContractAddresses();
   return useWriteContract({
-    mutation: { onError: (err) => console.error("USDC approve failed:", err) },
+    mutation: {
+      onError: (err) => console.error("USDC approve failed:", err),
+      onMutate: () => ({
+        abi: ERC20ABI,
+        address: addrs.usdc,
+        functionName: "approve" as const,
+        args: [spender, amount] as const,
+      }),
+    },
   });
 }
 
 // ── Hook: Vault User Shares ──
 export function useVaultUserShares(address?: `0x${string}`) {
+  const { isConnected } = useAccount();
   const addrs = useContractAddresses();
   return useReadContract({
     abi: VaultABI, address: addrs.vault, functionName: "userShares",
     args: address ? [address] : undefined,
-    query: { enabled: !!address, refetchInterval: 15_000 },
+    query: {
+      enabled: isConnected && !!address,
+      staleTime: 30_000,
+      refetchInterval: 30_000,
+    },
   });
 }
 
 // ── Hook: Vault Total Value ──
 export function useVaultTotalValue() {
+  const { isConnected } = useAccount();
   const addrs = useContractAddresses();
   return useReadContract({
     abi: VaultABI, address: addrs.vault, functionName: "totalValue",
-    args: [], query: { refetchInterval: 15_000 },
+    args: [],
+    query: {
+      enabled: isConnected,
+      staleTime: 30_000,
+      refetchInterval: 60_000,
+    },
   });
 }
 
 // ── Hook: Vault Total Shares ──
 export function useVaultTotalShares() {
+  const { isConnected } = useAccount();
   const addrs = useContractAddresses();
   return useReadContract({
     abi: VaultABI, address: addrs.vault, functionName: "totalShares",
-    args: [], query: { refetchInterval: 15_000 },
+    args: [],
+    query: {
+      enabled: isConnected,
+      staleTime: 30_000,
+      refetchInterval: 60_000,
+    },
   });
 }
 
 // ── Hook: Strategy Info ──
 export function useStrategyInfo(strategyId: bigint) {
+  const { isConnected } = useAccount();
   const addrs = useContractAddresses();
   return useReadContract({
     abi: VaultABI, address: addrs.vault, functionName: "strategies",
-    args: [strategyId], query: { refetchInterval: 30_000 },
+    args: [strategyId],
+    query: {
+      enabled: isConnected,
+      staleTime: 60_000,
+      refetchInterval: 60_000,
+    },
   });
 }
 
 // ── Hook: Strategy Count ──
 export function useStrategyCount() {
+  const { isConnected } = useAccount();
   const addrs = useContractAddresses();
   return useReadContract({
     abi: VaultABI, address: addrs.vault, functionName: "strategyCount", args: [],
+    query: {
+      enabled: isConnected,
+      staleTime: 60_000,
+    },
   });
 }
 
 // ── Hook: Min Deposit ──
 export function useMinDeposit() {
+  const { isConnected } = useAccount();
   const addrs = useContractAddresses();
   return useReadContract({
     abi: VaultABI, address: addrs.vault, functionName: "minDeposit", args: [],
+    query: {
+      enabled: isConnected,
+      staleTime: 120_000,
+    },
   });
 }
 
 // ── Hook: Deposit ──
 export function useVaultDeposit() {
-  return useWriteContract({});
+  const { isConnected } = useAccount();
+  const addrs = useContractAddresses();
+  return useWriteContract({
+    mutation: {
+      onMutate: () => ({
+        abi: VaultABI,
+        address: addrs.vault,
+        functionName: "deposit" as const,
+      }),
+    },
+  });
 }
 
 // ── Hook: Withdraw ──
 export function useVaultWithdraw() {
-  return useWriteContract({});
+  const { isConnected } = useAccount();
+  const addrs = useContractAddresses();
+  return useWriteContract({
+    mutation: {
+      onMutate: () => ({
+        abi: VaultABI,
+        address: addrs.vault,
+        functionName: "withdraw" as const,
+      }),
+    },
+  });
 }
 
 // ── Hook: Claim Yield ──
 export function useVaultClaimYield() {
-  return useWriteContract({});
+  const { isConnected } = useAccount();
+  const addrs = useContractAddresses();
+  return useWriteContract({
+    mutation: {
+      onMutate: () => ({
+        abi: VaultABI,
+        address: addrs.vault,
+        functionName: "claimYield" as const,
+      }),
+    },
+  });
 }
 
 // ── Helpers ──
