@@ -151,7 +151,7 @@ export default function PoliciesPage() {
       {/* ── Page Header ── */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-display font-bold text-[28px] tracking-tight text-[var(--color-foreground)]">
+          <h1 className="font-bold text-[28px] tracking-tight text-[var(--color-foreground)]">
             {t("policies.title")}
           </h1>
           <div className="flex items-center gap-2.5 mt-2">

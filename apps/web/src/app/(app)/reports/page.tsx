@@ -12,7 +12,7 @@ export default function ReportsPage() {
     <div className="max-w-5xl mx-auto space-y-6">
       {/* ── Header ── */}
       <div>
-        <h1 className="font-display text-[28px] font-bold tracking-tight text-[var(--color-foreground)]">
+        <h1 className="text-[28px] font-bold tracking-tight text-[var(--color-foreground)]">
           {t("nav.reports")}
         </h1>
         <div className="flex items-center gap-2.5 mt-2">
@@ -43,7 +43,7 @@ export default function ReportsPage() {
 
         {/* Description */}
         <div className="max-w-md mx-auto space-y-3">
-          <h3 className="font-display text-base font-semibold text-[var(--color-foreground)] tracking-tight">
+          <h3 className="text-base font-semibold text-[var(--color-foreground)] tracking-tight">
             {t("nav.reports")}
           </h3>
           <p className="text-[13px] text-[var(--color-muted)] leading-relaxed font-mono">

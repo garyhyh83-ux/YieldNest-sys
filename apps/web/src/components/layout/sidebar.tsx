@@ -56,7 +56,7 @@ export function Sidebar() {
             </span>
           </div>
           <div>
-            <span className="font-display font-bold text-[15px] tracking-tight text-[var(--color-foreground)]">
+            <span className="font-bold text-[15px] tracking-tight text-[var(--color-foreground)]">
               {t("app.title")}
             </span>
             <p className="text-[10px] text-[var(--color-muted)] tracking-[0.2em] uppercase font-mono">

@@ -1,16 +1,11 @@
 import type { Metadata } from "next";
-import { Outfit, DM_Sans, JetBrains_Mono } from "next/font/google";
+import { DM_Sans, JetBrains_Mono } from "next/font/google";
 import { AppProviders } from "@/providers/app-providers";
 import "./globals.css";
 
-const displayFont = Outfit({
-  subsets: ["latin"],
-  variable: "--font-display",
-  display: "swap",
-});
-
 const bodyFont = DM_Sans({
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-sans",
   display: "swap",
 });
@@ -28,7 +23,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <AppProviders fontClassName={`${displayFont.variable} ${bodyFont.variable} ${monoFont.variable}`}>
+    <AppProviders fontClassName={`${bodyFont.variable} ${monoFont.variable}`}>
       {children}
     </AppProviders>
   );

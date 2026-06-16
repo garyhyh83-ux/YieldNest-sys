@@ -87,7 +87,7 @@ export default function DepositPage() {
     return (
       <div className="space-y-8">
         <div>
-          <h1 className="font-display text-[28px] font-bold text-[var(--color-foreground)]">
+          <h1 className="text-[28px] font-bold text-[var(--color-foreground)]">
             {t("deposit.title")}
           </h1>
           <div className="accent-rule my-3" />
@@ -122,7 +122,7 @@ export default function DepositPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="font-display text-[28px] font-bold text-[var(--color-foreground)]">
+        <h1 className="text-[28px] font-bold text-[var(--color-foreground)]">
           {t("deposit.title")}
         </h1>
         <div className="accent-rule my-3" />
@@ -136,7 +136,7 @@ export default function DepositPage() {
         <div className="lg:col-span-2 space-y-6">
           <Card className="card-glow shimmer-hover corner-accent">
             <CardHeader>
-              <CardTitle className="font-display text-base flex items-center gap-2">
+              <CardTitle className="text-base flex items-center gap-2">
                 <ArrowDownToLine className="w-4 h-4 text-[var(--color-accent)]" />
                 {t("deposit.depositBtn")}
               </CardTitle>
@@ -199,7 +199,7 @@ export default function DepositPage() {
         <div className="space-y-4">
           <Card className="card-glow shimmer-hover">
             <CardHeader>
-              <CardTitle className="font-display text-sm flex items-center gap-2">
+              <CardTitle className="text-sm flex items-center gap-2">
                 <TrendingUp className="w-4 h-4 text-[var(--color-accent)]" />
                 {t("deposit.strategy")}
               </CardTitle>
@@ -229,7 +229,7 @@ export default function DepositPage() {
 
           <Card className="card-glow shimmer-hover">
             <CardHeader>
-              <CardTitle className="font-display text-sm flex items-center gap-2">
+              <CardTitle className="text-sm flex items-center gap-2">
                 <Layers className="w-4 h-4 text-[var(--color-accent)]" />
                 {t("deposit.vaultStats")}
               </CardTitle>

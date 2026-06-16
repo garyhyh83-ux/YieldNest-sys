@@ -145,7 +145,7 @@ export default function StrategiesPage() {
       <div className="space-y-8">
         {/* Header */}
         <div>
-          <h1 className="font-display text-[28px] font-bold tracking-tight text-[var(--color-foreground)]">
+          <h1 className="text-[28px] font-bold tracking-tight text-[var(--color-foreground)]">
             {t("strategies.title")}
           </h1>
           <div className="flex items-center gap-2.5 mt-2">
@@ -183,7 +183,7 @@ export default function StrategiesPage() {
       {/* ── Header ── */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-display text-[28px] font-bold tracking-tight text-[var(--color-foreground)]">
+          <h1 className="text-[28px] font-bold tracking-tight text-[var(--color-foreground)]">
             {t("strategies.title")}
           </h1>
           <div className="flex items-center gap-2.5 mt-2">

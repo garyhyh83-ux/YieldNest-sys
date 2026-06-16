@@ -31,11 +31,11 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white border border-[var(--color-border)] mb-6 shadow-[var(--shadow-card)] relative overflow-hidden">
             {/* Inner gold glow */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,color-mix(in_srgb,var(--color-accent)_12%,transparent),transparent_70%)]" />
-            <span className="relative font-display font-bold text-2xl text-[var(--color-accent)]">
+            <span className="relative font-bold text-2xl text-[var(--color-accent)]">
               YN
             </span>
           </div>
-          <h1 className="font-display text-[28px] font-bold tracking-tight text-[var(--color-foreground)]">
+          <h1 className="text-[28px] font-bold tracking-tight text-[var(--color-foreground)]">
             {t("app.title")}
           </h1>
           <div className="flex items-center justify-center gap-3 mt-3">
