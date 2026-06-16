@@ -35,9 +35,14 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
               YN
             </span>
           </div>
-          <h1 className="text-[28px] font-bold tracking-tight text-[var(--color-foreground)]">
-            {t("app.title")}
-          </h1>
+          <div className="flex items-center justify-center gap-3">
+            <h1 className="text-[28px] font-bold tracking-tight text-[var(--color-foreground)]">
+              {t("app.title")}
+            </h1>
+            <span className="text-xl font-semibold text-[var(--color-accent)]">
+              {t("app.chineseName")}
+            </span>
+          </div>
           <div className="flex items-center justify-center gap-3 mt-3">
             <div className="w-6 h-px bg-[var(--color-border)]" />
             <p className="text-[11px] font-mono text-[var(--color-muted)] tracking-[0.25em] uppercase">

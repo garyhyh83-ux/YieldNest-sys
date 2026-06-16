@@ -49,7 +49,7 @@
 
 /* ── Base ── */
 html {
-  font-family: var(--font-sans, "DM Sans"), ui-sans-serif, sans-serif;
+  font-family: var(--font-sans, "DM Sans"), "Microsoft YaHei", "微软雅黑", "PingFang SC", "Hiragino Sans GB", ui-sans-serif, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

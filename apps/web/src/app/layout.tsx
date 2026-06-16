@@ -17,7 +17,7 @@ const monoFont = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "YieldNest — Enterprise Stablecoin Yield",
+  title: "YieldNest 金瓯 — Enterprise Stablecoin Yield",
   description: "Enterprise-grade stablecoin yield aggregator",
 };
 

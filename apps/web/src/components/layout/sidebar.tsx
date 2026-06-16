@@ -56,9 +56,14 @@ export function Sidebar() {
             </span>
           </div>
           <div>
-            <span className="font-bold text-[15px] tracking-tight text-[var(--color-foreground)]">
-              {t("app.title")}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-[15px] tracking-tight text-[var(--color-foreground)]">
+                {t("app.title")}
+              </span>
+              <span className="text-[13px] font-semibold text-[var(--color-accent)]">
+                {t("app.chineseName")}
+              </span>
+            </div>
             <p className="text-[10px] text-[var(--color-muted)] tracking-[0.2em] uppercase font-mono">
               Treasury Terminal
             </p>
